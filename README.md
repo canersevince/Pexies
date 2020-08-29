@@ -4,12 +4,12 @@
 
 [Pexies](https://github.com/canersevince/pexies) Pexies is a personal photo gallery built on pexels api. You can see curated pictures, randomized pictures and add them to your favourites.
 
-#Use it
+# Use it
   <p><a href="http://pexies.herokuapp.com/">Pexies!</a></p>
   <p align="center">
   
  
-#Example enviroment variables
+# Example enviroment variables
 pexels_api_key=somepexelsapikey
 
 ### Thanks to awesome people who created these awesome things
