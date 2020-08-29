@@ -2,7 +2,7 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import axios from 'axios'
 
-axios.defaults.baseURL = "http://" + location.host
+axios.defaults.baseURL = location.protocol+ "//" + location.host
 Vue.use(Vuex)
 
 export default new Vuex.Store({
