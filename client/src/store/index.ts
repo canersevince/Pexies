@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import axios from 'axios'
-import {Photo} from "@/models/photo";
+import {Photo} from "../models/photo";
 import * as Cookie from 'js-cookie'
 axios.defaults.baseURL = location.protocol + "//" + location.host
 Vue.use(Vuex)
