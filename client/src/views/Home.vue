@@ -5,7 +5,7 @@
         </div>
         <Photos name="random"/>
         <div @click="randomize()" class="bottom-bar" :class="nm ? 'bg-dark' : ''">
-            <i style="font-size: 48px" :style="!nm ? 'color: #333!important' : 'color:#ddd!important'" class="fas fa-dice"></i>
+            <i style="font-size: 48px" :style="nm ? 'color: #ddd!important' : 'color:#333!important'" class="fas fa-dice"></i>
         </div>
     </div>
 </template>
