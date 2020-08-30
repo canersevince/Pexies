@@ -2,11 +2,16 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import axios from 'axios'
 import {Photo} from "../models/photo";
+import { authModule } from "./auth";
 import * as Cookie from 'js-cookie'
+
 axios.defaults.baseURL = location.protocol + "//" + location.host
 Vue.use(Vuex)
 
 export default new Vuex.Store({
+    modules: {
+        auth: authModule
+    },
     state: {
         nightMode: false,
         curated: [],
@@ -117,5 +122,4 @@ export default new Vuex.Store({
             }
         },
     },
-    modules: {}
 })

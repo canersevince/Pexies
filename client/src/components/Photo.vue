@@ -51,7 +51,11 @@
                 const self = this;
                 function send(aspectRatio:number) {
                     let className;
-                    if(aspectRatio>0.5) {
+                  console.log(aspectRatio)
+                  console.log(aspectRatio)
+                  console.log(aspectRatio)
+                  console.log(aspectRatio)
+                    if(aspectRatio<0.5) {
                         className = "4by3"
                     } else {
                         className = "16by9"
@@ -198,5 +202,13 @@
         .photo
             width 150px
             height 150px
+
+    .is-16by9, .is-4by3
+      text-align center
+
+    .is-16by9 > img
+        height 100%!important
+        width auto!important
+        margin 0 auto
 
 </style>
