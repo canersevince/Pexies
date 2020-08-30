@@ -4,8 +4,8 @@
             <h1 :style="{'color' : !nm ? '#333' : '#ddd'}">Randomizer</h1>
         </div>
         <Photos name="random"/>
-        <div @click="randomize()" class="bottom-bar" :class="nm ? 'bg-dark' : ''">
-            <i style="font-size: 48px" :style="nm ? 'color: #ddd!important' : 'color:#333!important'" class="fas fa-dice"></i>
+        <div @click="randomize()" class="bottom-bar" :class="nm ? 'bg-dark' : ''" :style="{'color' : !nm ? '#333!important' : '#ddd!important'}">
+            <i style="font-size: 48px" class="fas fa-dice"></i>
         </div>
     </div>
 </template>
