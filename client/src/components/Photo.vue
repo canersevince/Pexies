@@ -8,14 +8,17 @@
         </b-tag>
         <transition-group tag="div" name="fade" mode="out-in" class="like_button">
             <span :key="'like'" v-show="propCopy.liked === false && path !== '/favourites'" @click="like(propCopy)">
-                <i style="color: deeppink" class="fa fa-heart"></i>
+                <i class="fa fa-heart btn_icon"></i>
             </span>
             <span :key="'dislike'" v-show="propCopy.liked === true" @click="dislike(propCopy)">
-                <i class="fa fa-times"></i>
+                <i class="fa fa-times btn_icon"></i>
             </span>
         </transition-group>
+        <span @click="expand" class="expand_button">
+            <i class="fa fa-expand btn_icon"></i>
+        </span>
         <span @click="visit" class="visit_button">
-            <i style="color: deeppink" class="fa fa-search"></i>
+            <i class="fa fa-search btn_icon"></i>
         </span>
     </div>
 </template>
@@ -35,6 +38,32 @@
           this.propCopy = JSON.parse(JSON.stringify(this.photo))
         },
         methods: {
+            expand(event:Event){
+                this.$store.commit('showLoader')
+                var img = document.createElement('img')
+                img.src = this.propCopy.src.original
+                img.onload = function (e:any) {
+                    if(e.path && e.path[0]){
+                        const aspect$ = e.path[0].naturalWidth  / e.path[0].naturalHeight
+                        send(aspect$)
+                    }
+                }
+                const self = this;
+                function send(aspectRatio:number) {
+                    let className;
+                    if(aspectRatio>0.5) {
+                        className = "4by3"
+                    } else {
+                        className = "16by9"
+                    }
+                    const h = self.$createElement
+                    const vnode = h('p', { class: `image modal_image is-${className}` }, [
+                        h('img', { attrs: { src: self.propCopy.src.original }})
+                    ])
+                    self.$store.dispatch('expandPhoto',{ $el: vnode, $buefy: self.$buefy})
+                }
+
+            },
             visit(){
                 window.open(this.propCopy.url, '_blank')
             },
@@ -101,7 +130,7 @@
         align-items center
         justify-content center
         align-content center
-        box-shadow 0 12px 20px #bebebe, -6px -12px 20px #cdcdcd;;
+        box-shadow 0 12px 20px #bebebe, -6px -12px 20px #cdcdcd;
         height 200px
         width 200px
         border-radius 30px
@@ -125,12 +154,12 @@
         top 10px
         right 10px
 
-    .like_button, .visit_button
+    .like_button, .visit_button, .expand_button
         z-index 999
         transition 200ms ease
         padding 4px
         border-radius 4px
-        background rgba(255, 255, 255, 0.5)
+        background rgba(0, 0, 0, 0.5)
         position absolute
         left 10px
         bottom 10px
@@ -141,8 +170,13 @@
 
     .visit_button
         left unset
-        right 10px
         bottom 10px
+        right 10px
+
+    .expand_button
+        left unset
+        margin 0 auto
+        right: calc(50% - 16px)
 
     .not_likable {
         color #555
@@ -150,4 +184,19 @@
 
     .like_button:hover > *
         transform scale(1.08)
+
+    .modal_image{
+        width 100%
+        height auto
+    }
+    .btn_icon
+        color pink
+        &:hover
+            transform scale(1.05)
+
+    @media screen and (max-width:425px)
+        .photo
+            width 150px
+            height 150px
+
 </style>

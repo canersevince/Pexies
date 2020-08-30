@@ -1,11 +1,11 @@
 <template>
     <div class="home">
         <div class="title">
-            <h1>Randomizer</h1>
+            <h1 :style="{'color' : !nm ? '#333' : '#ddd'}">Randomizer</h1>
         </div>
         <Photos name="random"/>
-        <div @click="randomize()" class="bottom-bar">
-            <i style="font-size: 48px" class="fas fa-dice"></i>
+        <div @click="randomize()" class="bottom-bar" :class="nm ? 'bg-dark' : ''">
+            <i style="font-size: 48px" :style="nm ? 'color: #333!important' : 'color:#ddd!important'" class="fas fa-dice"></i>
         </div>
     </div>
 </template>
@@ -17,6 +17,11 @@
         name: 'Home',
         components: {
             Photos
+        },
+        computed:{
+            nm(){
+                return this.$store.getters.getNightMode
+            }
         },
         methods: {
             randomize() {
@@ -35,8 +40,9 @@
         position fixed
         bottom 0
         left 0
+        background #ddd
         justify-content: center;
-        box-shadow 0 6px 6px rgba(0,0,0,0.1)
+        box-shadow 0 -6px 6px rgba(0,0,0,0.1)
         width 100%
 
     .bottom-bar, .bottom-bar * {
@@ -48,5 +54,8 @@
         color pink
         cursor pointer
         z-index 999
+    }
+    .bg-dark > svg:hover {
+        color hotpink
     }
 </style>

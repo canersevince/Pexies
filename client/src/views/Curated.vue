@@ -1,7 +1,7 @@
 <template>
     <div class="curated">
         <div class="title">
-            <h1>Curated</h1>
+            <h1 :style="{'color' : !nm ? '#333' : '#ddd'}">Curated</h1>
         </div>
         <Photos name="curated"/>
     </div>
@@ -14,7 +14,12 @@
         name: 'Curated',
         components: {
             Photos
-        }
+        },
+        computed:{
+            nm(){
+                return this.$store.getters.getNightMode
+            }
+        },
     }
 </script>
 

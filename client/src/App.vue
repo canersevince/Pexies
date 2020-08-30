@@ -1,33 +1,73 @@
 <template>
-    <div id="app">
+    <div id="app" :class="darkMode ? 'bg-dark' : ''">
         <div id="loader" v-if="$store.state.loading">
             <q-spinner-ios style="color: white" size="48"></q-spinner-ios>
         </div>
+        <div class="nightMode">
+            <b-switch
+                    v-model="nm"
+                    passive-type='is-dark'
+                    type='is-warning'>
+                <span :style="{'color' : darkMode ? '#ddd' : '#333'}">{{ darkMode ? "Dark Mode" : "Light Mode" }}</span>
+            </b-switch>
+        </div>
         <div id="nav">
-            <router-link class="router-link" to="/" tag="a"><i class="fas fa-dice-six"></i></router-link>
+            <router-link class="router-link" to="/" tag="a"><i class="fas fa-dice-six link"></i></router-link>
             |
-            <router-link class="router-link" to="/curated" tag="a"><i class="fas fa-heart"></i></router-link>
+            <router-link class="router-link" to="/curated" tag="a"><i class="fas fa-heart link"></i></router-link>
             |
-            <router-link class="router-link" to="/favourites" tag="a"><i class="fas fa-thumbs-up"></i></router-link>
+            <router-link class="router-link" to="/favourites" tag="a"><i class="fas fa-thumbs-up link"></i></router-link>
         </div>
         <transition name="fade" style="animation-duration: 0.2s" mode="out-in">
-            <router-view/>
+            <router-view appear :key="path"/>
         </transition>
     </div>
 </template>
 
 <script>
     import {QSpinnerIos} from 'quasar'
-
+    import * as Cookie from 'js-cookie'
     export default {
         components: {
             QSpinnerIos
+        },
+        data(){
+            return {
+                nm: null
+            }
+        },
+        watch:{
+            nm(a){
+                this.$store.commit('switchNightMode', a)
+                if(a == true){
+                    document.body.classList.add('bg-dark')
+                } else {
+                    document.body.classList.remove('bg-dark')
+                }
+            }
+        },
+        computed: {
+            darkMode(){
+                return this.$store.getters['getNightMode']
+            }
+        },
+        created() {
+            const nmCookie = Cookie.get('nightMode')
+            if(nmCookie){
+                const nm = JSON.parse(nmCookie)
+                this.nm = nm
+                this.$store.commit('switchNightMode', nm)
+                if(nm === true){
+                    document.body.classList.add('bg-dark')
+                } else {
+                    document.body.classList.remove('bg-dark')
+                }
+            }
         }
     }
 </script>
 <style lang="stylus">
     body {
-        background #dfdfdf
         min-height 100vh
         width 100vw
         overflow-x hidden
@@ -41,11 +81,12 @@
         color #2c3e50
 
         #nav
-            padding 20px
+            padding 10px
             *
+                font-size 32px
                 text-decoration none
-                color #333
                 font-weight 500
+                transition 200ms ease
 
         #loader
             z-index 9999
@@ -58,19 +99,20 @@
             top 0
             left 0
             background rgba(0, 0, 0, .8)
-    #nav *
-        font-size 32px
-        transition 200ms ease
 
-    .router-link:hover > *, .router-link:hover,
+    .link
+        color #FFC200
+
+    .link:hover
         color pink!important
-        transform scale(1.03)!important
+        transform scale(1.05)!important
 
-    .router-link-exact-active > *, .router-link-exact-active
-        color hotpink
+    .router-link-exact-active > svg
+        color hotpink!important
 
     .photos
         overflow-x hidden
+        padding 10px 0
 
     .title
         text-transform uppercase
@@ -81,4 +123,20 @@
         color #333
         text-align center
 
+    .nightMode
+        z-index 9999
+        position: fixed;
+        bottom 0
+        left 5px
+        transform scale(0.6)
+        transform-origin center
+
+    .bg-dark
+        background #333!important
+
+    .dark_shadows
+        box-shadow 0 6px 10px #222, -6px -6px 12px #111!important;
+
+    .dark_shadows:hover
+        box-shadow 10px 6px 12px #222, -6px -6px 12px #111!important;
 </style>

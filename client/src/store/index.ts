@@ -1,18 +1,24 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import axios from 'axios'
-
-axios.defaults.baseURL = location.protocol+ "//" + location.host
+import {Photo} from "@/models/photo";
+import * as Cookie from 'js-cookie'
+axios.defaults.baseURL = location.protocol + "//" + location.host
 Vue.use(Vuex)
 
 export default new Vuex.Store({
     state: {
+        nightMode: false,
         curated: [],
         random: [],
         favourites: [],
         loading: true
     },
     mutations: {
+        switchNightMode(state, payload) {
+            state.nightMode = payload
+            Cookie.set('nm', payload)
+        },
         hideLoader(state) {
             state.loading = false
         },
@@ -25,7 +31,7 @@ export default new Vuex.Store({
         storeRandom(state, payload) {
             state.random = payload
         },
-        storeFavourites(state, payload){
+        storeFavourites(state, payload) {
             state.favourites = payload
         }
     },
@@ -38,10 +44,20 @@ export default new Vuex.Store({
         },
         getFavourites(state) {
             return state.favourites
+        },
+        getNightMode(state) {
+            return state.nightMode
         }
     },
     actions: {
-        loadFavourites(state){
+        expandPhoto(state, {$buefy, $el}) {
+            // tslint:disable-next-line
+            $buefy.modal.open({content: [$el]})
+            setTimeout(() => {
+                state.commit('hideLoader')
+            }, 500)
+        },
+        loadFavourites(state) {
             let liked = localStorage.getItem('likedPhotos')
             if (liked) {
                 liked = JSON.parse(liked)
@@ -49,22 +65,22 @@ export default new Vuex.Store({
             }
             state.commit('hideLoader')
         },
-        likePhoto(state,photo){
+        likePhoto(state, photo) {
             const lStorage = localStorage.getItem('likedPhotos')
-            if(lStorage){
+            if (lStorage) {
                 const parsed = JSON.parse(lStorage)
                 parsed.push(photo)
                 localStorage.setItem('likedPhotos', JSON.stringify(parsed))
             } else {
-                localStorage.setItem('likedPhotos', '['+JSON.stringify(photo)+']')
+                localStorage.setItem('likedPhotos', '[' + JSON.stringify(photo) + ']')
             }
         },
-        dislikePhoto(state,photo){
+        dislikePhoto(state, photo) {
             const lStorage$ = localStorage.getItem('likedPhotos')
-            if(lStorage$) {
+            if (lStorage$) {
                 const lStorage = JSON.parse(lStorage$)
-                if(lStorage !== null){
-                    const foundItem = lStorage.findIndex((i: any) => i.url == photo.url)
+                if (lStorage !== null) {
+                    const foundItem = lStorage.findIndex((i: Photo) => i.url == photo.url)
                     lStorage.splice(foundItem, 1)
                     localStorage.setItem('likedPhotos', JSON.stringify(lStorage))
                     state.dispatch('loadFavourites')

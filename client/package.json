@@ -8,7 +8,9 @@
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
+    "@types/js-cookie": "^2.2.6",
     "buefy": "^0.9.2",
+    "js-cookie": "^2.2.1",
     "quasar": "^1.13.1",
     "vue": "^2.6.11",
     "vue-class-component": "^7.2.3",

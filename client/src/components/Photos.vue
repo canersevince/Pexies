@@ -4,6 +4,7 @@
                 :style="{backgroundImage: `url(${photo.src.medium})`}"
                 transition="scale"
                 class="photo"
+                :class="!lightMode ? 'light' : 'dark_shadows'"
                 v-for="(photo, i) in photos" :key="i">
                 <Photo :photo="photo"></Photo>
         </q-intersection>
@@ -19,6 +20,9 @@
         props: ["name"],
         components: {Photo, QInfiniteScroll, QIntersection},
         computed: {
+            lightMode(){
+                return this.$store.getters['getNightMode']
+            },
             photos(){
                 if(this.$props.name == 'curated'){
                     return this.$store.getters.getCuratedPhotos
@@ -60,5 +64,4 @@
         justify-content center
         flex-wrap wrap
         max-height 80vh
-        overflow-y scroll
 </style>
