@@ -1,5 +1,6 @@
 <template>
   <div id="app" :class="darkMode ? 'bg-dark' : ''">
+    <GoToTop></GoToTop>
     <div id="loader" v-if="$store.state.loading">
       <q-spinner-ios style="color: white" size="48"></q-spinner-ios>
     </div>
@@ -19,10 +20,14 @@
         <span class="mx-1">|</span>
         <router-link class="router-link" to="/favourites" tag="a"><i class="fas fa-thumbs-up link"></i></router-link>
         <span class="mx-1">|</span>
+        <router-link class="router-link" to="/search" tag="a"><i class="fas fa-search link"></i></router-link>
+        <span class="mx-1">|</span>
         <a v-if="$store.state.auth.auth == false " @click.prevent="showLogin()"><i class="fas fa-key link"></i></a>
         <span class="mx-1" v-if="$store.state.auth.auth == false">|</span>
         <a v-if="$store.state.auth.auth == false" @click.prevent="showSignup()"><i class="fa fa-user-plus link"></i></a>
-        <a v-if="$store.state.auth.auth == true"><i class="fa fa-user link"></i></a>
+        <router-link to="/profile" v-if="$store.state.auth.auth == true"><i class="fa fa-user link"></i></router-link>
+        <span v-if="$store.state.auth.auth == true" class="mx-1">|</span>
+        <a v-show="$store.state.auth.auth == true" @click.prevent="logout()"><i class="fas fa-door-open link"></i></a>
       </div>
     </div>
     <b-modal
@@ -48,7 +53,7 @@
       </template>
     </b-modal>
     <transition name="fade" style="animation-duration: 0.2s" mode="out-in">
-      <router-view appear :key="path"/>
+      <router-view style="overflow-x: hidden" appear :key="path"/>
     </transition>
   </div>
 </template>
@@ -58,11 +63,14 @@ import {QSpinnerIos} from 'quasar'
 import Signup from "@/components/Signup";
 import * as Cookie from 'js-cookie'
 import Login from "@/components/Login";
+import GoToTop from "@/components/GoToTop";
+
 export default {
   components: {
     QSpinnerIos,
     Signup,
-    Login
+    Login,
+    GoToTop
   },
   data() {
     return {
@@ -76,20 +84,26 @@ export default {
     showSignup() {
       this.isSignupModalActive = true;
     },
-    showLogin(newUser=null){
-      if(newUser) {
+    showLogin(newUser = null) {
+      if (newUser) {
         this.newUser = newUser
       }
       this.isLoginModalActive = true;
+    },
+    logout() {
+      this.$store.dispatch('logout')
     }
   },
   watch: {
     nm(a) {
+      const favicon = document.getElementById("favicon");
       this.$store.commit('switchNightMode', a)
       if (a == true) {
         document.body.classList.add('bg-dark')
+        favicon.href = favicon.href.toString().includes('pink') ? favicon.href.toString().replace('faviconpink', 'favicon') : favicon.href
       } else {
         document.body.classList.remove('bg-dark')
+        favicon.href = !favicon.href.toString().includes('pink') ? favicon.href.toString().replace('favicon', 'faviconpink') : favicon.href
       }
     }
   },
@@ -101,16 +115,27 @@ export default {
   mounted() {
     const nmCookie = Cookie.get('nm')
     if (nmCookie) {
-      console.log('Cookies found!')
       const nm = JSON.parse(nmCookie)
       this.nm = nm
       this.$store.commit('switchNightMode', nm)
+      const favicon = document.getElementById("favicon");
       if (nm === true) {
         document.body.classList.add('bg-dark')
+        favicon.href = favicon.href.toString().includes('pink') ? favicon.href.toString().replace('faviconpink', 'favicon') : favicon.href
       } else {
         document.body.classList.remove('bg-dark')
+        favicon.href = !favicon.href.toString().includes('pink') ? favicon.href.toString().replace('favicon', 'faviconpink') : favicon.href
       }
     }
+    const token = Cookie.get('pexies_token')
+    const username = Cookie.get('pexies_username')
+    if (token && username) {
+      this.$store.commit('showLoader')
+      this.$store.dispatch('loginWithToken', {token, username, $buefy: this.$buefy})
+    }
+    setInterval(() => {
+      console.log(this.$store.state)
+    }, 5000)
   }
 }
 </script>
@@ -184,13 +209,16 @@ body {
   transform-origin center
 
 .bg-dark
+  transition 200ms ease-in
   background #333 !important
-  color #ccc!important
+  color #ccc !important
+
   * {
-    color #ccc!important
+    color #ccc !important
   }
+
   .field .control input {
-    color #333!important
+    color #333 !important
   }
 
 .dark_shadows
@@ -198,4 +226,58 @@ body {
 
 .dark_shadows:hover
   box-shadow 10px 6px 12px #222, -6px -6px 12px #111 !important;
+
+.tabs.is-toggle li.is-active a
+  background-color #ffc200 !important
+  border-color #ffc200 !important
+  color #333 !important
+
+.tabs.is-toggle li.is-active a *
+  color #333 !important
+
+.tabs.is-toggle li:first-child a
+  border-top-left-radius 0 !important
+
+.tabs.is-toggle li:last-child a
+  border-top-right-radius 0 !important
+
+.message-body .media .media-content
+  color black
+
+.tabs.is-toggle a:hover
+  background-color rgba(#ffc200, 0.7) !important
+  color #444 !important
+
+.avatar-cropper-btn:hover
+  background-color rgba(#ffc200, 0.7) !important
+
+.scale-enter-active, .scale-leave-active {
+  transition: opacity 0.3s, transform 0.3s cubic-bezier(0.215, 0.61, 0.355, 1)
+}
+
+.scale-enter, .scale-leave, .scale-leave-to {
+  opacity: 0;
+  transform: scale3d(0, 0, 1)
+}
+
+/* width */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #ffc200;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #888;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #ffc500;
+}
+
 </style>

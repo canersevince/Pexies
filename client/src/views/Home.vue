@@ -25,7 +25,7 @@
         },
         methods: {
             randomize() {
-                this.$store.dispatch('getRandom')
+                this.$store.dispatch('getRandomPexels')
             }
         },
     }

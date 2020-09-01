@@ -1,27 +1,29 @@
-import {Controller, Get, Req} from '@nestjs/common';
+import {Controller, Get, Req, Post, UseInterceptors, UploadedFile, CacheInterceptor, CacheTTL} from '@nestjs/common';
 import {AppService} from './app.service';
+import {DbService} from './db/db.service';
+import {PexelsService} from "./pexels/pexels.service";
+import {FlickrService} from "./flickr/flickr.service";
 import {Request} from 'express';
-
 
 @Controller()
 export class AppController {
-    constructor(private readonly appService: AppService) {
+    constructor(
+        private readonly appService: AppService,
+        private readonly  DbService: DbService) {
     }
 
-    @Get('/api')
+    @Get('/')
     getApi(@Req() request: Request): {} {
         return this.appService.apiStatus()
     }
 
-    @Get('/api/photos/random')
-    getRandom(@Req() request: Request): Promise<{}> {
-        console.log('Request.')
-        return this.appService.getRandom()
+    @Get('/tags/get')
+    @UseInterceptors(CacheInterceptor)
+    @CacheTTL(600)
+    getTags(@Req() request: Request): {} {
+        return this.DbService.tagGetter()
     }
 
-    @Get('/api/photos/curated')
-    getCurated(@Req() request: Request): Promise<{}> {
-        console.log('curated')
-        return this.appService.getCurated()
-    }
+
+
 }

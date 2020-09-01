@@ -2,6 +2,7 @@
     <div class="curated">
         <div class="title">
             <h1 :style="{'color' : !nm ? '#333' : '#ddd'}">Curated</h1>
+            <p style="font-size: 12px; opacity: 0.75">Explore new content from Pexels curated list.</p>
         </div>
         <Photos name="curated"/>
     </div>
@@ -12,6 +13,11 @@
 
     export default {
         name: 'Curated',
+        data(){
+          return{
+            loaded: false,
+          }
+        },
         components: {
             Photos
         },

@@ -38,12 +38,13 @@
 </template>
 
 <script>
+import Cookies from 'js-cookie'
 export default {
   name: "Signup",
   props: ["newUser"],
   data() {
     return {
-      remember: false,
+      remember: true,
       User: {
         username: "",
         password: "",
@@ -68,7 +69,7 @@ export default {
         return
       }
       const logged = JSON.parse(JSON.stringify(this.User))
-      this.$store.dispatch('login', {User: logged, $buefy: this.$buefy, $router: this.$router, Close: this.close})
+      this.$store.dispatch('login', {User: logged, $buefy: this.$buefy, $router: this.$router, Close: this.close, Remember: this.remember})
     }
   },
   mounted() {
