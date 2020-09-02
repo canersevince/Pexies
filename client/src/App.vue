@@ -14,7 +14,9 @@
     </div>
     <div id="nav">
       <div class="routes">
-        <router-link class="router-link" to="/" tag="a"><i class="fas fa-dice-six link"></i></router-link>
+        <router-link class="router-link" to="/" tag="a"><i class="fas fa-columns link"></i></router-link>
+        <span class="mx-1">|</span>
+        <router-link class="router-link" to="/randomizer" tag="a"><i class="fas fa-dice-six link"></i></router-link>
         <span class="mx-1">|</span>
         <router-link class="router-link" to="/curated" tag="a"><i class="fas fa-heart link"></i></router-link>
         <span class="mx-1">|</span>
@@ -74,6 +76,7 @@ export default {
   },
   data() {
     return {
+      loaded: false,
       newUser: null,
       isSignupModalActive: false,
       isLoginModalActive: false,
@@ -96,6 +99,7 @@ export default {
   },
   watch: {
     nm(a) {
+      this.$store.commit('showLoader')
       const favicon = document.getElementById("favicon");
       this.$store.commit('switchNightMode', a)
       if (a == true) {
@@ -105,6 +109,7 @@ export default {
         document.body.classList.remove('bg-dark')
         favicon.href = !favicon.href.toString().includes('pink') ? favicon.href.toString().replace('favicon', 'faviconpink') : favicon.href
       }
+      this.$store.commit('hideLoader')
     }
   },
   computed: {
@@ -112,7 +117,8 @@ export default {
       return this.$store.getters['getNightMode']
     }
   },
-  mounted() {
+  async mounted() {
+    this.$store.commit('showLoader')
     const nmCookie = Cookie.get('nm')
     if (nmCookie) {
       const nm = JSON.parse(nmCookie)
@@ -131,11 +137,9 @@ export default {
     const username = Cookie.get('pexies_username')
     if (token && username) {
       this.$store.commit('showLoader')
-      this.$store.dispatch('loginWithToken', {token, username, $buefy: this.$buefy})
+      await this.$store.dispatch('loginWithToken', {token, username, $buefy: this.$buefy})
     }
-    setInterval(() => {
-      console.log(this.$store.state)
-    }, 5000)
+    this.$store.commit('hideLoader')
   }
 }
 </script>

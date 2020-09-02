@@ -88,15 +88,8 @@ export default Vue.extend({
 
     },
     dislike(photo: any) {
-      console.log(this.path)
-      this.$store.dispatch('dislikePhoto', photo)
-      this.$buefy.toast.open({
-        message: "Photo removed from your library!",
-        type: "is-success"
-      })
-      if (this.path !== '/favourites') {
-        this.propCopy.liked = false;
-      }
+      const username = this.$store.getters.getCurrentUser.username
+      this.$store.dispatch('dislikePhoto', {photo, username, $buefy:this.$buefy})
       this.$emit('like')
     },
     isPhotoLikeable(p: Photo) {

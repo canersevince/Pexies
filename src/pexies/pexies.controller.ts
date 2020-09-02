@@ -72,6 +72,15 @@ export class PexiesController {
         return false
     }
 
+    @Post('/user/unfav')
+    async unfavourite(@Req() request: Request): Promise<{}> {
+        const data = await this.DbService.removeFav(request.body)
+        if (data) {
+            return { code: 200 }
+        }
+        return false
+    }
+
     @Post('/user/sync_favourites')
     syncFavs(@Req() request: Request): {} {
         const username: string = request.headers["username"].toString()

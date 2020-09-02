@@ -147,8 +147,17 @@ export class DbService {
             return exists.save()
         }
     }
-
-
+    async removeFav(payload) {
+        const username = payload.username
+        const photo = payload.photo
+        const exists = await userModel.findOne({username}).exec()
+        if (exists as User) {
+            exists.favourites = exists.favourites.filter(val => {
+                return val.url !== photo.url
+            })
+            return exists.save()
+        } else return null
+    }
     // uploads and syncs
     async updateAvatar(user: User, payload) {
         const username = user

@@ -19,7 +19,6 @@ export class FlickrService {
     async searchByWord(word, page, perPage) {
         console.log('Flickr search.', word)
         const request = await flickr.photos.search({accuracy: 1, safe_search: 1, page:page, per_page: perPage, text: word, tags: word})
-        console.log(request.body)
         if(request.body.stat == 'ok'){
             return request.body.photos
         } else {

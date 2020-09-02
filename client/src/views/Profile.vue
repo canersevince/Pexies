@@ -98,7 +98,7 @@ export default {
       return this.$store.getters['getNightMode']
     }
   },
-  created() {
+  mounted() {
     this.$store.commit('hideLoader')
   }
 }

@@ -35,4 +35,28 @@ export class SearchController {
         console.log('pexels', pexels.total_results)
         return {flickr, unsplash: unsplash, pexels, pexies:[]}
     }
+
+
+    @Get('/photos/:word/:page/:perPage/:platform')
+    @UseInterceptors(CacheInterceptor)
+    @CacheTTL(6000)
+    async getPage(@Req() req: Request): Promise<{}> {
+        const word = req.params.word
+        const page = req.params.page
+        const perPage = req.params.perPage
+        const platform = req.params.platform
+        switch (platform){
+            case "pexels":
+                return this.PexelsService.searchByWord(word, page, perPage)
+            case "pexies":
+                return []
+            case "unsplash":
+                return this.UnsplashService.searchByWord(word, page, perPage)
+            case "flickr":
+                return this.FlickrService.searchByWord(word, page, perPage)
+            default:
+                return {error: "Error. Unrecognized platform."}
+        }
+    }
+
 }

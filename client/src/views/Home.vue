@@ -1,33 +1,20 @@
 <template>
     <div class="home">
         <div class="title">
-            <h1 :style="{'color' : !nm ? '#333' : '#ddd'}">Randomizer</h1>
-        </div>
-        <Photos name="random"/>
-        <div @click="randomize()" class="bottom-bar" :class="nm ? 'bg-dark' : ''" :style="{'color' : !nm ? '#333!important' : '#ddd!important'}">
-            <i style="font-size: 48px" class="fas fa-dice"></i>
+            <h1 :style="{'color' : !nm ? '#333' : '#ddd'}">Pexies.com</h1>
         </div>
     </div>
 </template>
 <script>
     // @ is an alias to /src
-    import Photos from '@/components/Photos.vue'
 
     export default {
         name: 'Home',
-        components: {
-            Photos
-        },
-        computed:{
-            nm(){
-                return this.$store.getters.getNightMode
-            }
-        },
-        methods: {
-            randomize() {
-                this.$store.dispatch('getRandomPexels')
-            }
-        },
+        mounted() {
+          if(this.$store.state.auth.auth){
+            this.$router.push('/Profile')
+          }
+        }
     }
 </script>
 

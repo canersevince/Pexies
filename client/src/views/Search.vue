@@ -39,6 +39,10 @@
           />
         </b-tab-item>
         <b-tab-item label="Pexels" icon-pack="fab" icon="pexels">
+          <template slot="header">
+            <span><img width="16" style="width: 16px;margin-right:0.5em; filter: grayscale(100%)" src="/pexels.png" alt="pexels"></span>
+            <span>Pexels</span>
+          </template>
           <SearchResults
               :pageStart="(paginationOptions[2].current*paginationOptions[2].perPage)"
               :pageEnd="paginationOptions[2].current*paginationOptions[2].perPage+paginationOptions[2].perPage"
@@ -58,16 +62,18 @@
          :style="{'color' : !nm ? '#333!important' : '#ddd!important'}">
       <transition-group tag="div" name="fade" mode="out-in">
         <div :key="i" v-for="(pagination, i) in paginationOptions">
-          <b-pagination v-if="currentTab == i"
-                        simple
+          <b-pagination v-if="currentTab == i && getTotal(pagination.name) > 1"
                         :class="nm ? 'bg-dark' : ''" :style="{'color' : !nm ? '#333!important' : '#ddd!important'}"
                         type="is-warning"
+                        order="is-centered"
+                        icon-pack="fa"
                         v-model="pagination.current"
                         :total="getTotal(pagination.name)"
                         :range-before="pagination.rangeBefore"
                         :range-after="pagination.rangeAfter"
                         :per-page="perPage"
-                        >
+                        @change="pageChange($event, pagination.name)"
+          >
           </b-pagination>
         </div>
       </transition-group>
@@ -82,17 +88,20 @@ export default {
   name: 'Search',
   data() {
     return {
-      perPage: 25,
+      lastSearch: "",
+      perPage: 40,
       selectedTag: "",
       currentTab: 0,
       searchWord: "",
       paginationOptions: [
         {
           name: "pexies",
-          total: 0,
           current: 1,
+          total: 0,
           rangeBefore: 5,
           rangeAfter: 5,
+          prevIcon: 'chevron-left',
+          nextIcon: 'chevron-right'
         },
         {
           name: "flickr",
@@ -100,20 +109,26 @@ export default {
           current: 1,
           rangeBefore: 5,
           rangeAfter: 5,
+          prevIcon: 'chevron-left',
+          nextIcon: 'chevron-right'
         },
         {
           name: "pexels",
-          total: 0,
           current: 1,
+          total: 0,
           rangeBefore: 5,
           rangeAfter: 5,
+          prevIcon: 'chevron-left',
+          nextIcon: 'chevron-right'
         },
         {
           name: "unsplash",
-          total: 0,
           current: 1,
+          total: 0,
           rangeBefore: 5,
           rangeAfter: 5,
+          prevIcon: 'chevron-left',
+          nextIcon: 'chevron-right'
         }
       ]
     }
@@ -136,27 +151,40 @@ export default {
     },
   },
   methods: {
+    pageChange(page, platform){
+      const word = this.lastSearch.slice()
+      console.log('page changed')
+      this.$store.dispatch('searchNewPage', {page, platform, word, $buefy: this.$buefy, perPage: 40})
+    },
     getTotal(platform) {
-      switch (platform) {
-        case 'pexies':
-          return this.$store.state.flickrSearchResultTotal;
-        case 'pexels':
-          return this.$store.state.pexelsSearchResultTotal
-        case 'flickr':
-          return this.$store.state.flickrSearchResultTotal;
-        case 'unsplash':
-          return this.$store.state.unsplashSearchResultTotal;
-        default:
-          return this.$store.getters.getSearchResults.pexies.length;
+      if (platform == 'pexies') {
+        console.log(platform)
+        console.log(this.$store.state.flickrSearchResultTotal)
+        return this.$store.state.flickrSearchResultTotal;
       }
+      if (platform == 'pexels') {
+        console.log(platform)
+        console.log(this.$store.state.pexelsSearchResultTotal)
+        return this.$store.state.pexelsSearchResultTotal
+      }
+      if (platform == 'flickr') {
+        console.log(platform)
+        console.log(this.$store.state.flickrSearchResultTotal)
+        return this.$store.state.flickrSearchResultTotal;
+      }
+      if (platform == 'unsplash') {
+        console.log(platform)
+        console.log(this.$store.state.unsplashSearchResultTotal)
+        return this.$store.state.unsplashSearchResultTotal;
+      }
+      return 0
     },
     search(val = null) {
       const searchWord = val ? val : this.searchWord
-      console.log('searching...')
+      this.lastSearch = searchWord.slice()
       if (searchWord.length > 0) {
         this.$store.dispatch('searchOnAllPlatforms', {word: searchWord, page: 1, perPage: 40, $buefy: this.$buefy})
         this.selectedTag = ""
-        this.searchWord = ""
       }
     },
   },

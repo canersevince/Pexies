@@ -1,5 +1,5 @@
 <template>
-  <div id="intersection" class="photos">
+  <div v-show="!$store.state.transition" id="intersection" class="photos">
     <div style="display:flex;
          flex-wrap:wrap; align-items:center;
          justify-content:center;
@@ -7,11 +7,15 @@
       <div
           class="photo"
           style="width: 200px; height: 200px"
-          :style="{backgroundImage: `url(${photo.src.medium})`, visibility : i<perPage ? '' : 'hidden', opacity: i<perPage ? 1 : 0}"
+          :style="{visibility : i<perPage ? '' : 'hidden', opacity: i<perPage ? 1 : 0}"
           :class="[!lightMode ? 'light' : 'dark_shadows', i<perPage ? '' : 'intersect', !isPhotoLikeable(photo) ? 'disable_grayscale' : '']"
           v-for="(photo, i) in photos" :key="i+''+Math.random()"
       >
-        <div>
+        <lazy-component style="height: 100%; width: 100%; z-index: 1;">
+            <img style="width: 100%; height: 100%;object-fit: cover;"
+                 :src="photo.src.medium">
+        </lazy-component>
+        <div style="z-index: 2; background: transparent">
           <Photo @like="callbackFunc()" :photo="photo"></Photo>
         </div>
       </div>
@@ -27,7 +31,7 @@
 import Photo from "@/components/Photo.vue";
 
 export default {
-  props: ["name", "userPhotos"],
+  props: ["name", "userPhotos", "pageStart", "pageEnd"],
   data() {
     return {
       offsetTop: 0,
@@ -41,7 +45,7 @@ export default {
       this.callbackFunc()
     },
     offsetTop(cur) {
-        this.callbackFunc()
+      this.callbackFunc()
     }
   },
   components: {Photo},
@@ -65,7 +69,8 @@ export default {
     },
     photos() {
       if (this.$props.name == 'curated') {
-        return this.$store.getters.getCuratedPhotos
+        console.log(this.pageStart, this.pageEnd)
+        return this.$store.getters.getCuratedPhotos.slice(this.pageStart, this.pageEnd)
       }
       if (this.$props.name == 'random') {
         return this.$store.getters.getRandomPhotos
@@ -89,15 +94,12 @@ export default {
       }
       if (this.$props.name == 'profile') {
         const usersFav = this.$store.getters.getCurrentUsersFavourites
-        console.log(usersFav)
         return usersFav.reverse()
       }
       if (this.$props.name == 'profileID') {
         const usersFav = this.$props.userPhotos
         return usersFav.reverse()
       }
-
-
 
 
       return []
@@ -122,8 +124,8 @@ export default {
       const item = document.getElementById('intersection')
       const rect = el.getBoundingClientRect();
       return (
-          rect.top >= 0 &&
-          rect.bottom <= (item.innerHeight || item.clientHeight) + 300
+          rect.top >= -100 &&
+          rect.bottom <= (item.innerHeight || item.clientHeight) + 400
       );
     },
     callbackFunc() {
@@ -138,8 +140,10 @@ export default {
     },
   },
   async mounted() {
+    const self = this;
     const item = document.getElementById('intersection')
     item.addEventListener('scroll', this.onScroll);
+    this.$store.commit('showLoader')
     switch (this.$props.name) {
       case "curated":
         this.$store.dispatch('getCuratedPexels', this.$buefy).then(res => {
@@ -148,10 +152,14 @@ export default {
         })
         break;
       case "random":
-        this.$store.dispatch('getRandomPexels', this.$buefy).then(res => {
-          this.offsetTop = 100
-          this.offsetTop = 0
-        })
+        setTimeout(() => {
+          if (self) {
+            self.$store.dispatch('getRandomPexels', this.$buefy).then(res => {
+              this.offsetTop = 100
+              this.offsetTop = 0
+            })
+          }
+        }, 300)
         break;
       case "user":
         break;
@@ -164,7 +172,9 @@ export default {
     }
     this.callbackFunc()
     setTimeout(() => {
-      this.loaded = true
+      if (self) {
+        self.loaded = true
+      }
     }, 5000)
   },
   destroyed() {
@@ -209,7 +219,9 @@ export default {
   opacity: 0;
   transform: scale3d(0, 0, 1)
 }
-
+.photo{
+  overflow hidden
+}
 @keyframes scale {
   0% {
     transition: opacity 0.2s, transform 0.2s cubic-bezier(0.215, 0.61, 0.355, 1), all 200ms

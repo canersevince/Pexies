@@ -1,12 +1,13 @@
 <template>
   <div id="intersection" class="photos">
-    <div style="display:flex;
+    <transition-group tag="div" name="fade" mode="out-in" style="display:flex;
          flex-wrap:wrap; align-items:center;
          justify-content:center;
-         height: 100%; width: 100%">
+         height: 100%; width: 100%;
+         animation-duration: 0.1s!important">
       <div
           class="photo"
-          style="width: 200px; height: 200px"
+          style="width: 200px; height: 200px; animation-duration: 0.1s!important;"
           :style="{backgroundImage: `url(${photo.src.medium})`}"
           :class="[!lightMode ? 'light' : 'dark_shadows', !isPhotoLikeable(photo) ? 'disable_grayscale' : '']"
           v-for="(photo, i) in photos" :key="i+''+Math.random()"
@@ -15,20 +16,21 @@
           <Photo :photo="photo"></Photo>
         </div>
       </div>
-    </div>
+    </transition-group>
     <b-message style="animation-duration: 100ms" key="message" class="my-2"
                v-if="photos && photos.length == 0 || !photos"
-               type="is-danger">There is nothing here...
+               type="is-danger">{{platform == 'pexies' ? 'There is nothing in pexies yet... but you can upload one!' : 'There is nothing here...'}}
     </b-message>
   </div>
 </template>
 
 <script>
 import Photo from "@/components/Photo.vue";
+
 export default {
   props: ["name", "pageStart", "pageEnd", "platform"],
   components: {Photo},
-  data(){
+  data() {
     return {
       loaded: false
     }
@@ -41,12 +43,12 @@ export default {
       if (a && i) return [...JSON.parse(i), ...a]
       return []
     },
-    lightMode(){
+    lightMode() {
       return this.$store.getters['getNightMode']
     },
-    photos(){
-      if (this.$props.platform){
-        switch (this.$props.platform){
+    photos() {
+      if (this.$props.platform) {
+        switch (this.$props.platform) {
           case 'pexies':
             return this.$store.getters.getSearchResults.pexies;
           case 'pexels':
@@ -62,7 +64,7 @@ export default {
       return []
     }
   },
-  methods :{
+  methods: {
     isPhotoLikeable(p) {
       const exists = this.likedImgs.find((val) => {
         return val.url == p.url

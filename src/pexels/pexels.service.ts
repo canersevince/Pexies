@@ -18,7 +18,7 @@ export class PexelsService {
         axios.defaults.headers.Authorization = process.env.pexels_api_key
         let word = RandomWord()
         const {data} = await axios.get(`https://api.pexels.com/v1/search?query=${word}&per_page=100`)
-        if(data.photos.length>25){
+        if(data.photos.length>40){
             return data
         } else {
             let nextTick = await this.getRandom()
