@@ -1,9 +1,9 @@
 import {Injectable} from '@nestjs/common';
 import {DbService} from "../db/db.service";
+import {NudityDetectionService} from "../nudity-detection/nudity-detection.service";
 
 const DotEnv = require('dotenv')
 const RandomWord = require('random-words')
-const fs = require('fs')
 
 DotEnv.config()
 const AWS = require('aws-sdk');
@@ -17,7 +17,10 @@ const bucketName = process.env.BUCKET_NAME
 
 @Injectable()
 export class AwsService {
-    constructor(private DbService: DbService) {
+    constructor(private DbService: DbService,
+    private readonly NudityDetectionService: NudityDetectionService
+) {
+
     }
 
     async uploadAvatar(file, og, user, oldAvatar) {
@@ -34,7 +37,29 @@ export class AwsService {
         };
         let self = this;
         let response = await s3.upload(params).promise()
-        if(response && response.Location){
+        if (response && response.Location) {
+            const awsLink = response.Location
+            console.log(response)
+            const detector = await this.NudityDetectionService.checkNudity(awsLink)
+            console.log(detector.data.output)
+            if(detector && detector.data && detector.data.output && detector.data.output.nsfw_score){
+                if(detector.data.output.nsfw_score>0.83){
+                    const nudityDeletion = {
+                        Bucket: bucketName + '/public', // pass your bucket name,
+                        Key: response.Location,
+                    };
+                    await s3.deleteObject(nudityDeletion, function (errrs, data) {
+                        if (errrs) {
+                            console.log(errrs, errrs.stack);
+                        } else {
+                            console.log('File Deleted. Reason: Nudity');
+                        }                 // deleted
+                    });
+                    return {
+                        error: "Sorry but you can't upload nsfw images to pexies. If you think it is a mistake, let us know."
+                    }
+                }
+            }
             const saved = await self.DbService.updateAvatar(user, response.Location)
             if (saved) {
                 const deleteParams = {
@@ -59,6 +84,7 @@ export class AwsService {
         }
         return {error: "Internal Error."}
     }
+
     async uploadCover(file, og, user, oldCover) {
         const ogName = og.split('.')
         let RandomWords = RandomWord(3);
@@ -73,7 +99,27 @@ export class AwsService {
         };
         let self = this;
         let response = await s3.upload(params).promise()
-        if(response && response.Location){
+        if (response && response.Location) {
+            const detector = await this.NudityDetectionService.checkNudity(response.Location)
+            console.log(detector.data.output)
+            if(detector && detector.data && detector.data.output && detector.data.output.nsfw_score){
+                if(detector.data.output.nsfw_score>0.83){
+                    const nudityDeletion = {
+                        Bucket: bucketName + '/public', // pass your bucket name,
+                        Key: response.Location,
+                    };
+                    await s3.deleteObject(nudityDeletion, function (errrs, data) {
+                        if (errrs) {
+                            console.log(errrs, errrs.stack);
+                        } else {
+                            console.log('File Deleted. Reason: Nudity');
+                        }                 // deleted
+                    });
+                    return {
+                        error: "Sorry but you can't upload nsfw images to pexies. If you think it is a mistake, let us know."
+                    }
+                }
+            }
             const saved = await self.DbService.updateCover(user, response.Location)
             if (saved) {
                 const deleteParams = {

@@ -13,6 +13,8 @@ import { SearchController } from './search/search.controller';
 import { PexelsControllerController } from './pexels-controller/pexels-controller.controller';
 import { PexiesController } from './pexies/pexies.controller';
 import { FlickerControllerController } from './flicker-controller/flicker-controller.controller';
+import { NudityDetectionService } from './nudity-detection/nudity-detection.service';
+import { PhotoGeneratorsService } from './photo-generators/photo-generators.service';
 
 @Module({
     imports: [
@@ -22,7 +24,7 @@ import { FlickerControllerController } from './flicker-controller/flicker-contro
         CacheModule.register()
     ],
     controllers: [AppController, SearchController, PexelsControllerController, PexiesController, FlickerControllerController],
-    providers: [AppService, DbService, FlickrService, PexelsService, AwsService, FilterService, UnsplashService],
+    providers: [AppService, DbService, FlickrService, PexelsService, AwsService, FilterService, UnsplashService, NudityDetectionService, PhotoGeneratorsService],
 })
 export class AppModule {
 }

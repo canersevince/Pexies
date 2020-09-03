@@ -2,9 +2,11 @@ import {Injectable} from '@nestjs/common';
 import salt_generator from "../salt_generator";
 import {FilterService} from '../filter/filter.service'
 import {User} from "../models/user";
+import {Photo} from "../models/photo";
 import {Tag} from "../models/tag"
 import {userSchema} from "../models/user_schema";
 import {tagSchema} from "../models/tag_schema";
+import {photoSchema} from "../models/photo_schema";
 
 const Mongo = require('mongoose')
 const DotEnv = require('dotenv')
@@ -20,8 +22,10 @@ db.once('open', function () {
 });
 const UserSchema = new Mongo.Schema(userSchema)
 const TagSchema = new Mongo.Schema(tagSchema)
+const PhotoSchema = new Mongo.Schema(photoSchema)
 const userModel = Mongo.model('User', UserSchema)
 const tagModel = Mongo.model('Tag', TagSchema)
+const photoModel = Mongo.model('Photo', PhotoSchema)
 
 @Injectable()
 export class DbService {
@@ -64,7 +68,6 @@ export class DbService {
 
 
     }
-
     async loginWithPassword(user) {
         let encrypted;
         let bytes;
@@ -88,7 +91,6 @@ export class DbService {
             code: "not_found"
         }
     }
-
     async loginWithToken(user) {
         let encrypted;
         let bytes;
@@ -115,9 +117,7 @@ export class DbService {
             code: "not_found"
         }
     }
-
     // finders
-
     async findUserByUsername(payload) {
         const exists = await userModel.findOne({username: payload}, {favourites: {$slice: -40}}).exec()
         if (exists as User) {
@@ -126,16 +126,13 @@ export class DbService {
             return null
         }
     }
-
     async getFavsByPage({perPage, page, username}) {
-        const favourites = await userModel.findOne({username}, {favourites: {$slice: [page * -40, perPage]}})
+        const favourites = await userModel.findOne({username}, {favourites: {$slice: [page * (Math.abs(page)*-1), perPage]}})
         if (favourites) {
             return favourites
         }
         else return null
     }
-
-
     // interaction
     async favPhoto(payload) {
         const username = payload.username
@@ -162,7 +159,6 @@ export class DbService {
     async updateAvatar(user: User, payload) {
         const username = user
         const exists = await userModel.findOne({username: username}).exec()
-        console.log(exists)
         if (exists as User) {
             console.log('updating db..')
             exists.preferences.profile_picture = payload
@@ -173,7 +169,6 @@ export class DbService {
             }
         }
     }
-
     async updateCover(user: User, payload) {
         const username = user
         const exists = await userModel.findOne({username: username}).exec()
@@ -188,7 +183,6 @@ export class DbService {
             }
         }
     }
-
     async syncFavs(clientFavs, username: string) {
         const exists = await userModel.findOne({username: username}).exec()
         console.log(username)
@@ -207,7 +201,6 @@ export class DbService {
             }
         }
     }
-
     async tagCollector(tag) {
         const exists = await tagModel.findOne({title: tag}).exec()
         if (exists) {
@@ -228,5 +221,35 @@ export class DbService {
     async tagGetter() {
         const tags = await tagModel.find( ).limit(50).sort( { searchs: 1} )
         return tags
+    }
+    async cachePhotosFromSearch(photos:Photo[]){
+        if(photos && photos.length>0){
+            for (const p of photos) {
+              const newPhoto = {
+                  url : p.url,
+                  photographer : p.photographer,
+                  photographer_url : p.photographer_url,
+                  liked : p.liked,
+                  src : p.src,
+                  tags : p.tags,
+                  photographer_id : p.photographer_id,
+                  description : p.description,
+                  height : p.height,
+                  width : p.width,
+                  id : parseInt(String(p.id)),
+                  created : new Date(),
+              }
+                await photoModel.updateOne(
+                    { url: p.url },
+                    { $setOnInsert: { ...newPhoto} },
+                    { upsert: true },
+                ).exec()
+            }
+            console.log(`saved ${photos.length} items to database.`)
+        }
+    }
+    async getPhotosFromDB (tags, page:number, perPage){
+        console.log(tags)
+        return await photoModel.find({tags: {$all: [...tags]}}).skip(page*(Math.abs(perPage))).limit(Math.abs(perPage)).exec();
     }
 }

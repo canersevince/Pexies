@@ -17,4 +17,10 @@ export class UnsplashService {
                return json
             })
     }
+    async getRandom(){
+            return unsplash.photos.getRandomPhoto({count: 30}).then(toJson)
+                .then(json => {
+                    return json
+                })
+    }
 }
