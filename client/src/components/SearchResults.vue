@@ -66,6 +66,7 @@ export default {
   },
   methods: {
     isPhotoLikeable(p) {
+      if(!this.likedImgs || this.likedImgs.length == 0) return false
       const exists = this.likedImgs.find((val) => {
         return val.url == p.url
       })
