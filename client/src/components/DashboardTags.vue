@@ -3,6 +3,8 @@
     <h6>Popular Tags</h6>
     <transition-group tag="b-taglist" name="fade" mode="out-in">
       <b-tag
+          unselectable="on"
+          class="noselect"
           :key="tag.title"
           :class="activeTag == tag.title ?'is-danger' : 'is-warning'" @click.native.prevent="onClick(tag.title)"
           v-for="tag in tags" type="is-warning" style="cursor: pointer">{{ tag.title }}
@@ -14,12 +16,14 @@
     <h6 v-if="interests.length>0">Your Interests</h6>
     <transition-group v-if="interests.length>0" tag="b-taglist" name="fade" mode="out-in">
       <b-tag
+          unselectable="on"
+          class="noselect"
           :style="{'color' : darkMode ? '#ddd!important;' : '#333!important;'}"
           :key="tag" :class="activeTag == tag ?'is-danger' : 'is-warning'" @click.native.prevent="onClick(tag)"
           v-for="tag in localTags" type="is-warning" style="cursor: pointer"> {{ tag }}
       </b-tag>
     </transition-group>
-    <p v-if="false" class="my-2" style="text-align: right; font-size: 12px; cursor: pointer; display: inline-block">Show all your
+    <p v-if="localTags.length>0" class="my-2" style="text-align: right; font-size: 12px; cursor: pointer; display: inline-block">Show all your
       interests.</p>
   </div>
 
@@ -140,6 +144,11 @@ export default {
 }
 </script>
 
-<style scoped>
-
+<style lang="stylus">
+.noselect, .noselect > *
+  -webkit-touch-callout: none; /* iOS Safari */
+  -webkit-user-select: none; /* Safari */
+  -moz-user-select: none; /* Old versions of Firefox */
+  -ms-user-select: none; /* Internet Explorer/Edge */
+  user-select: none; /* Non-prefixed version, currently */
 </style>

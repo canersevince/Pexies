@@ -8,7 +8,7 @@
         :is-cover="true">
     </AvatarCropper>
     <div class="profile_header" style="position: relative"
-         :style="`background-image: url(${user.preferences.profile_cover})`">
+         :style="user.preferences.profile_cover ? `background-image: url(${user.preferences.profile_cover})` : ''">
       <div class="sharer">
         <Sharer :user="$store.getters.getCurrentUser"></Sharer>
       </div>

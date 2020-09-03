@@ -377,4 +377,7 @@ body {
 .tag.is-warning > span {
   color #333 !important
 }
+
+.modal_image
+  z-index 99999
 </style>
