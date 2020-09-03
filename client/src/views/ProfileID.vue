@@ -12,6 +12,9 @@
       <div class="profile_props">
         <p class="my-2 text-bold profile_name" style="font-size: 16px; display: inline-block; cursor: default">
           {{ user.username }}</p>
+        <p v-if="user.description && user.description.length >0" class="my-2 text-bold profile_description" style="font-size: 16px; display: inline-block; cursor: default">
+          {{ user.description }}
+        </p>
         <ul class="profile_stats">
           <li class="stat_box">
             <div class="stat text-bold">
