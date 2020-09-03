@@ -14,25 +14,39 @@
     </div>
     <div id="nav">
       <div class="routes">
-        <router-link v-show="$store.state.auth.auth == false" class="router-link" to="/" tag="a"><i class="fas fa-home link"></i></router-link>
-        <span v-show="$store.state.auth.auth == false" class="mx-1">|</span>
-        <router-link v-show="$store.state.auth.auth == true" class="router-link" to="/Dashboard" tag="a"><i class="fas fa-columns link"></i></router-link>
-        <span v-show="$store.state.auth.auth == true" class="mx-1">|</span>
+        <router-link v-show="!auth" class="router-link" to="/" tag="a"><i class="fas fa-home link"></i></router-link>
+
+        <span v-show="!auth" class="mx-1">|</span>
+
+        <router-link v-show="auth" class="router-link" to="/Dashboard" tag="a"><i class="fas fa-columns link"></i>
+        </router-link>
+
+
+        <span v-show="auth" class="mx-1">|</span>
+
         <router-link class="router-link" to="/randomizer" tag="a"><i class="fas fa-dice-six link"></i></router-link>
+
         <span class="mx-1">|</span>
+
         <router-link class="router-link" to="/curated" tag="a"><i class="fas fa-heart link"></i></router-link>
+
         <span class="mx-1">|</span>
+
         <router-link class="router-link" to="/favourites" tag="a"><i class="fas fa-thumbs-up link"></i></router-link>
+
         <span class="mx-1">|</span>
+
         <router-link class="router-link" to="/search" tag="a"><i class="fas fa-search link"></i></router-link>
-        <span class="mx-1">|</span>
-        <a v-if="$store.state.auth.auth == false " @click.prevent="showLogin()"><i class="fas fa-key link"></i></a>
-        <span class="mx-1" v-if="$store.state.auth.auth == false">|</span>
-        <a v-if="$store.state.auth.auth == false" @click.prevent="showSignup()"><i class="fa fa-user-plus link"></i></a>
-        <router-link to="/profile" v-if="$store.state.auth.auth == true"><i class="fa fa-user link"></i></router-link>
-        <span v-if="$store.state.auth.auth == true" class="mx-1">|</span>
-        <a v-show="$store.state.auth.auth == true" @click.prevent="logout()"><i class="fas fa-door-open link"></i></a>
-      </div>
+
+        <span class="mx-1" v-if="auth">|</span>
+
+        <router-link to="/profile" tag="a" v-if="auth == true"><i class="fa fa-user link"></i></router-link>
+        <span key="a" class="mx-1">|</span>
+        <span key="a2" v-if="auth == true" @click="logout()"><i class="fas fa-door-open link"></i></span>
+        <span key="a3" v-if="auth == true"  class="mx-1">|</span>
+        <span key="a4" v-if="auth == false" @click="showSignup"><i class="fas fa-key link"></i></span>
+        <span key="a5" v-if="auth == false" class="mx-1">|</span>
+        <span key="a6" v-if="auth == false" @click="showLogin" @close="showLogin($event)"><i class="fas fa-user-plus link"></i></span></div>
     </div>
     <b-modal
         v-model="isSignupModalActive"
@@ -42,7 +56,7 @@
         aria-role="dialog"
         aria-modal>
       <template #default="props">
-        <Signup :showLogin="showLogin" @close="props.close"></Signup>
+        <Signup :showLogin="showSignup" @close="props.close"></Signup>
       </template>
     </b-modal>
     <b-modal
@@ -56,7 +70,8 @@
         <Login :newUser="newUser" @close="props.close"></Login>
       </template>
     </b-modal>
-    <transition v-if="isAppAvabilable" class="animation_router" name="fade" style="animation-duration: 0.1s" mode="out-in">
+    <transition v-if="isAppAvabilable" class="animation_router" name="fade" style="animation-duration: 0.1s"
+                mode="out-in">
       <router-view style="overflow-x: hidden" appear :key="path"/>
     </transition>
   </div>
@@ -90,10 +105,10 @@ export default {
       this.isSignupModalActive = true;
     },
     showLogin(newUser = null) {
+      this.isLoginModalActive = true;
       if (newUser) {
         this.newUser = newUser
       }
-      this.isLoginModalActive = true;
     },
     logout() {
       this.$store.dispatch('logout')
@@ -117,7 +132,13 @@ export default {
     }
   },
   computed: {
-    isAppAvabilable(){
+    path(){
+      return this.$router.path
+    },
+    auth() {
+      return this.$store.getters.getAuth
+    },
+    isAppAvabilable() {
       return this.$store.state.isAppAvailable$
     },
     darkMode() {
@@ -249,7 +270,7 @@ body {
   border-top-right-radius 0 !important
 
 .message-body .media .media-content
-  color #333!important
+  color #333 !important
 
 .tabs.is-toggle a:hover
   background-color rgba(#ffc200, 0.7) !important
@@ -286,45 +307,56 @@ body {
 ::-webkit-scrollbar-thumb:hover {
   background: #ffc500;
 }
+
 .animation_router > * {
-  animation-duration 0.2s!important
+  animation-duration 0.2s !important
 }
 
+.sharer {
+  position absolute
+  right 10px
+  bottom 15px
+}
 
-@media screen and (max-width:1920px) {
+@media screen and (max-width: 1920px) {
   .photos {
     max-height 70vh
   }
 }
 
-@media screen and (max-width:1280px){
+@media screen and (max-width: 1280px) {
   .photos {
-    max-height 63vh!important
+    max-height 63vh !important
   }
 }
-@media screen and (max-width:768px){
+
+@media screen and (max-width: 768px) {
   .photos {
-    max-height 60vh!important
+    max-height 60vh !important
   }
 }
-@media screen and (max-width:425px){
-  .tags{
+
+@media screen and (max-width: 425px) {
+  .tags {
     display flex
     align-items center
     justify-content center
     width 80%
     margin 0 auto
   }
-  .columns{
+
+  .columns {
     display flex
     align-items center
     justify-content center
     flex-direction column-reverse
   }
-  .cover_add{
-    top auto!important
+
+  .cover_add {
+    top auto !important
   }
-  .nightMode{
+
+  .nightMode {
     z-index: 9999;
     position: fixed;
     bottom: 25px;
@@ -332,15 +364,18 @@ body {
     transform: rotate(-90deg) scale(.6);
     transform-origin: top;
   }
-  .photo{
-    width 140px!important
-    height 140px!important
+
+  .photo {
+    width 140px !important
+    height 140px !important
   }
+
   .tag span a {
     font-size 10px
   }
 }
+
 .tag.is-warning > span {
-  color #333!important
+  color #333 !important
 }
 </style>

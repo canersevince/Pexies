@@ -7,14 +7,14 @@
     <div class="container">
       <div class="row">
         <transition-group  tag="div" name="fadeUp" mode="out-in" class="columns">
-          <div :class="{extend : !showNavbar}" key="content" class="column is-9 is-offset-1">
+          <div :class="{extend : !showNavbar}" key="content" class="column is-9">
             <Photos :pageStart="pagination.current*perPage-perPage" :pageEnd="pagination.current*perPage" name="dashboard"></Photos>
           </div>
           <div style="transition: 300ms all"
                :style="[!showNavbar && width<500 ? 'height: 1px!important; min-height: 1px!important' : '',
                width<500 && showNavbar ? 'min-height: 30vh!important; height:30vh;': '']"
                key="tags" class="column is-3">
-            <p v-if="showNavbar" style="font-size: 12px; opacity: 0.75; margin-top: 5px">Follow a tag by double clicking on it.</p>
+            <p v-if="showNavbar" style="font-size: 12px; opacity: 0.75; margin-top: 5px" class="my-2">Add a tag to favourites by double clicking on it.</p>
             <DashboardTags v-if="showNavbar" @tagChange="tagChange($event)"></DashboardTags>
           </div>
         </transition-group>
@@ -87,10 +87,13 @@ export default {
     }
   },
   mounted() {
+    this.$store.commit('hideLoader')
+    if(this.$store.getters.getAuth == false) {
+      return
+    }
     if(window.innerWidth <500){
       document.getElementById('intersection').addEventListener('scroll', this.onScroll)
     }
-    this.$store.commit('hideLoader')
   },
   beforeDestroy () {
     if(window.innerWidth <500) {

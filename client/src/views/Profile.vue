@@ -9,6 +9,9 @@
     </AvatarCropper>
     <div class="profile_header" style="position: relative"
          :style="`background-image: url(${user.preferences.profile_cover})`">
+      <div class="sharer" :user="$store.getters.getCurrentUser">
+        <Sharer></Sharer>
+      </div>
       <span id="cover_add" v-if="!notBusy" style="
               transition: 300ms;
               opacity: 0;
@@ -81,10 +84,12 @@
 import Photos from "@/components/Photos";
 import AvatarCropper from "@/components/AvatarCropper";
 import {QSpinnerInfinity} from 'quasar'
+import Sharer from "@/components/Sharer";
 
 export default {
   name: "Profile",
   components: {
+    Sharer,
     Photos,
     AvatarCropper,
     QSpinnerInfinity

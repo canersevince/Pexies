@@ -19,7 +19,7 @@
     </transition-group>
     <b-message style="animation-duration: 100ms" key="message" class="my-2"
                v-if="photos && photos.length == 0 || !photos && searchTriggered"
-               type="is-danger">{{platform == 'pexies' ? 'There is nothing in pexies yet... but you can upload one!' : 'There is nothing here...'}}
+               type="is-danger">{{platform == 'pexies' ? 'This feature is not avabilable yet... Stay tuned!  ' : 'There is nothing here...'}}
     </b-message>
   </div>
 </template>

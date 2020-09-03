@@ -72,7 +72,7 @@ export default {
         password: "",
         passwordConfirmation: ""
       },
-      mailRegexp: /^\w+([-]?\w+)*@\w+([-]?\w+)*(\.\w{2,3})+$/
+      mailRegexp: /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
     }
   },
   computed: {
@@ -85,7 +85,7 @@ export default {
       return this.mailRegexp.test(this.User.email)
     },
     pwValidation() {
-      return this.User.password.length>6;
+      return this.User.password.length>5;
     },
     close() {
       this.$emit('close')
@@ -115,11 +115,12 @@ export default {
       const newUser = JSON.parse(JSON.stringify(this.User))
       this.$store.dispatch('signup', {
         User: newUser,
+        Close: this.close,
         Login: this.showLogin,
         $buefy: this.$buefy,
-        Close: this.close,
         $router: this.$router
       })
+      this.$emit('close', newUser.username)
     }
   }
 }

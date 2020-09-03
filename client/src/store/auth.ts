@@ -60,7 +60,7 @@ export const authModule = {
                                 message: "Account created!",
                                 type: "is-success"
                             })
-                            Close()
+                            Close(data.username)
                             Login(data)
                         }
                     }

@@ -84,14 +84,14 @@ const router = new VueRouter({
 
 router.beforeEach(async (to, from, next) => {
     // See if any of the matched routes has meta "requiresAuth"
+    const token = Cookie.get('pexies_token')
+    const username = Cookie.get('pexies_username')
     if (to.matched.some(route => route.meta.requiresAuth)) {
         // Yes this route requires authentication. See if the user is authenticated.
         if (store.getters.getAuth) {
             // User is authenticated, we allow access.
             next();
         } else {
-            const token = Cookie.get('pexies_token')
-            const username = Cookie.get('pexies_username')
             if (token && username) {
                 store.commit('showLoader')
                 const isSuccess = await store.dispatch('loginWithToken', {token, username}).then( res => {
@@ -110,19 +110,14 @@ router.beforeEach(async (to, from, next) => {
         // User is not authenticated. We can redirect her to
         // our login page. Or wherever we want.
     } else {
-        const token = Cookie.get('pexies_token')
-        const username = Cookie.get('pexies_username')
         if (token && username) {
             store.commit('showLoader')
             const isSuccess = await store.dispatch('loginWithToken', {token, username}).then( res => {
                 return res
             })
-            console.log(isSuccess)
-            console.log(isSuccess)
             if (isSuccess) {
                 next()
             } else {
-                store.dispatch('logout')
                 next('/')
             }
         }

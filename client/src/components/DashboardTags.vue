@@ -8,7 +8,7 @@
           v-for="tag in tags" type="is-warning" style="cursor: pointer">{{ tag.title }}
       </b-tag>
     </transition-group>
-    <p class="my-1" @click="showAllTags = !showAllTags"
+    <p class="my-2" @click="showAllTags = !showAllTags"
        style="display:inline-block;text-align: right; font-size: 12px; cursor: pointer; display: inline-block">
       {{ showAllTags ? 'Show less tags.' : 'Show more tags.' }}</p>
     <h6 v-if="interests.length>0">Your Interests</h6>
@@ -16,10 +16,10 @@
       <b-tag
           :style="{'color' : darkMode ? '#ddd!important;' : '#333!important;'}"
           :key="tag" :class="activeTag == tag ?'is-danger' : 'is-warning'" @click.native.prevent="onClick(tag)"
-          v-for="tag in interests" type="is-warning" style="cursor: pointer"> {{ tag }}
+          v-for="tag in localTags" type="is-warning" style="cursor: pointer"> {{ tag }}
       </b-tag>
     </transition-group>
-    <p class="my-1" style="text-align: right; font-size: 12px; cursor: pointer; display: inline-block">Show all your
+    <p v-if="false" class="my-2" style="text-align: right; font-size: 12px; cursor: pointer; display: inline-block">Show all your
       interests.</p>
   </div>
 
@@ -30,6 +30,7 @@ export default {
   name: "DashboardTags",
   data() {
     return {
+      localTags : [],
       clicks: 0,
       delay: 500,
       activeTag: "",
@@ -51,7 +52,14 @@ export default {
     },
     interests() {
       const ls = localStorage.getItem('interests')
-      if (ls) return JSON.parse(ls)
+      if (ls) {
+        if(JSON.parse(ls) == this.localTags){
+          return this.localTags
+        }
+        else {
+          return JSON.parse(ls)
+        }
+      }
       return []
     },
     darkMode() {
@@ -63,7 +71,7 @@ export default {
   },
   methods: {
     onClick(tag) {
-      const self = this
+      const self = this;
       this.clicks++
       if (this.clicks === 1) {
         this.timer = setTimeout(function () {
@@ -89,6 +97,7 @@ export default {
         interests = JSON.parse(interests)
         interests.push(tag)
         interests = [...new Set(interests)]
+        this.localTags = [...new Set(this.localTags), tag]
         interests = JSON.stringify(interests)
         localStorage.setItem('interests', interests)
       } else {
@@ -106,6 +115,10 @@ export default {
           interests.splice(index, 1)
           interests = JSON.stringify(interests)
           localStorage.setItem('interests', interests)
+          this.localTags = [...new Set(this.localTags)]
+          this.localTags = this.localTags.filter(val=>{
+            return val !== tag
+          })
         }
       }
     },
@@ -117,6 +130,11 @@ export default {
   created() {
     if (!this.dashboardContentLength || this.dashboardContentLength === 0) {
       this.$store.dispatch('getDashboard')
+    }
+    if(localStorage.getItem('interests')){
+      this.localTags = JSON.parse(localStorage.getItem('interests'))
+    } else {
+      this.localTags = []
     }
   }
 }
