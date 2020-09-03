@@ -126,6 +126,7 @@ export default Vue.extend({
   background-size cover
   background-position center
   background-repeat no-repeat
+  transition 300ms ease-in-out!important
   display flex
   align-items center
   justify-content center
