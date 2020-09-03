@@ -43,7 +43,6 @@
         <router-link to="/profile" tag="a" v-if="auth == true"><i class="fa fa-user link"></i></router-link>
         <span key="a" class="mx-1">|</span>
         <span key="a2" v-if="auth == true" @click="logout()"><i class="fas fa-door-open link"></i></span>
-        <span key="a3" v-if="auth == true"  class="mx-1">|</span>
         <span key="a4" v-if="auth == false" @click="showSignup"><i class="fas fa-key link"></i></span>
         <span key="a5" v-if="auth == false" class="mx-1">|</span>
         <span key="a6" v-if="auth == false" @click="showLogin" @close="showLogin($event)"><i class="fas fa-user-plus link"></i></span></div>
