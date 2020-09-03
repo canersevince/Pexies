@@ -71,6 +71,7 @@ export default {
     }
   },
   async created() {
+    const self = this;
     const id = this.$route.params.username
     if (id) {
       const { data } = await Axios.get(`/api/user/getbyusername/${id}`)
@@ -78,7 +79,9 @@ export default {
       if(!data.username){
         this.$router.push('/')
       }
-      this.$store.commit('hideLoader')
+      setTimeout(()=> {
+        if(self) self.$store.commit('hideLoader')
+      },500)
     }
   }
 }
