@@ -1,4 +1,4 @@
-import {Injectable} from '@nestjs/common';
+import {Injectable, Logger} from '@nestjs/common';
 import salt_generator from "../salt_generator";
 import {FilterService} from '../filter/filter.service'
 import {User} from "../models/user";
@@ -38,7 +38,7 @@ export class DbService {
             $or: [{
                 email: user.email
             }, {
-                username: user.username
+                username: { $regex : new RegExp(user.username, "i") }
             }]
         }).exec()
         if (!exists) {
@@ -72,9 +72,11 @@ export class DbService {
         let encrypted;
         let bytes;
         let decrypted;
-        const logger = user.username
+        const logger = user.username.toLowerCase()
         const salt = salt_generator(logger)
-        const exists = await userModel.findOne({username: logger}, {favourites: {$slice: -40}})
+
+        console.log(logger)
+        const exists = await userModel.findOne({username: { $regex : new RegExp(logger, "i") }}, {favourites: {$slice: -40}})
         if (exists) {
             encrypted = exists.password
             bytes = Crypto.AES.decrypt(encrypted, salt)
@@ -95,12 +97,12 @@ export class DbService {
         let encrypted;
         let bytes;
         let decrypted;
-        const logger = user.username
+        const logger = user.username.toLowerCase()
 
         const salt = salt_generator(logger)
         const loggerBytes = Crypto.AES.decrypt(user.pexies_token, salt)
         const loggerPassword = loggerBytes.toString(Crypto.enc.Utf8)
-        const exists = await userModel.findOne({username: logger})
+        const exists = await userModel.findOne({username: { $regex : new RegExp(logger, "i") }})
         if (exists) {
             encrypted = exists.password
             bytes = Crypto.AES.decrypt(encrypted, salt)
@@ -119,7 +121,7 @@ export class DbService {
     }
     // finders
     async findUserByUsername(payload) {
-        const exists = await userModel.findOne({username: payload}, {favourites: {$slice: -40}}).exec()
+        const exists = await userModel.findOne({username: payload.toLowerCase()}, {favourites: {$slice: -40}}).exec()
         if (exists as User) {
             return exists
         } else {
@@ -127,7 +129,7 @@ export class DbService {
         }
     }
     async getFavsByPage({perPage, page, username}) {
-        const favourites = await userModel.findOne({username}, {favourites: {$slice: [page * (Math.abs(page)*-1), perPage]}})
+        const favourites = await userModel.findOne({username:{ $regex : new RegExp(username, "i") }}, {favourites: {$slice: [page * (Math.abs(page)*-1), perPage]}})
         if (favourites) {
             return favourites
         }

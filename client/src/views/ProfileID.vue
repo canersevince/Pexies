@@ -77,6 +77,9 @@ export default {
       this.user = data
       console.log(data)
       this.$store.commit('hideLoader')
+      if(!data.username){
+        this.$router.push('/')
+      }
     }
   }
 }

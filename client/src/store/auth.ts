@@ -76,6 +76,7 @@ export const authModule = {
         login(state: any, {$buefy, User, $router, Close, Remember}: any) {
             axios.post('/api/user/login', User).then(res => {
                 const { data } = res;
+                console.log(data)
                 if (data && data.username && data.username.toLowerCase() == User.username.toLowerCase()) {
                     state.commit('successfulAuth', data)
                     if(Remember){
