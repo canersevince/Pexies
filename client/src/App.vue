@@ -14,8 +14,10 @@
     </div>
     <div id="nav">
       <div class="routes">
-        <router-link class="router-link" to="/" tag="a"><i class="fas fa-columns link"></i></router-link>
-        <span class="mx-1">|</span>
+        <router-link v-show="$store.state.auth.auth == false" class="router-link" to="/" tag="a"><i class="fas fa-home link"></i></router-link>
+        <span v-show="$store.state.auth.auth == false" class="mx-1">|</span>
+        <router-link v-show="$store.state.auth.auth == true" class="router-link" to="/Dashboard" tag="a"><i class="fas fa-columns link"></i></router-link>
+        <span v-show="$store.state.auth.auth == true" class="mx-1">|</span>
         <router-link class="router-link" to="/randomizer" tag="a"><i class="fas fa-dice-six link"></i></router-link>
         <span class="mx-1">|</span>
         <router-link class="router-link" to="/curated" tag="a"><i class="fas fa-heart link"></i></router-link>
@@ -54,7 +56,7 @@
         <Login :newUser="newUser" @close="props.close"></Login>
       </template>
     </b-modal>
-    <transition name="fade" style="animation-duration: 0.2s" mode="out-in">
+    <transition v-if="isAppAvabilable" class="animation_router" name="fade" style="animation-duration: 0.1s" mode="out-in">
       <router-view style="overflow-x: hidden" appear :key="path"/>
     </transition>
   </div>
@@ -99,6 +101,7 @@ export default {
   },
   watch: {
     nm(a) {
+      this.$store.commit('isAppAvailable', false)
       this.$store.commit('showLoader')
       const favicon = document.getElementById("favicon");
       this.$store.commit('switchNightMode', a)
@@ -110,17 +113,22 @@ export default {
         favicon.href = !favicon.href.toString().includes('pink') ? favicon.href.toString().replace('favicon', 'faviconpink') : favicon.href
       }
       this.$store.commit('hideLoader')
+      this.$store.commit('isAppAvailable', true)
     }
   },
   computed: {
+    isAppAvabilable(){
+      return this.$store.state.isAppAvailable$
+    },
     darkMode() {
       return this.$store.getters['getNightMode']
     }
   },
   async mounted() {
+    this.$store.dispatch('fetchTags')
     this.$store.commit('showLoader')
     const nmCookie = Cookie.get('nm')
-    if (nmCookie) {
+    if (nmCookie && this.$store.getters.getNightMode == null) {
       const nm = JSON.parse(nmCookie)
       this.nm = nm
       this.$store.commit('switchNightMode', nm)
@@ -133,13 +141,8 @@ export default {
         favicon.href = !favicon.href.toString().includes('pink') ? favicon.href.toString().replace('favicon', 'faviconpink') : favicon.href
       }
     }
-    const token = Cookie.get('pexies_token')
-    const username = Cookie.get('pexies_username')
-    if (token && username) {
-      this.$store.commit('showLoader')
-      await this.$store.dispatch('loginWithToken', {token, username, $buefy: this.$buefy})
-    }
     this.$store.commit('hideLoader')
+    this.$store.commit('isAppAvailable', true)
   }
 }
 </script>
@@ -246,7 +249,7 @@ body {
   border-top-right-radius 0 !important
 
 .message-body .media .media-content
-  color black
+  color #333!important
 
 .tabs.is-toggle a:hover
   background-color rgba(#ffc200, 0.7) !important
@@ -283,5 +286,61 @@ body {
 ::-webkit-scrollbar-thumb:hover {
   background: #ffc500;
 }
+.animation_router > * {
+  animation-duration 0.2s!important
+}
 
+
+@media screen and (max-width:1920px) {
+  .photos {
+    max-height 70vh
+  }
+}
+
+@media screen and (max-width:1280px){
+  .photos {
+    max-height 63vh!important
+  }
+}
+@media screen and (max-width:768px){
+  .photos {
+    max-height 60vh!important
+  }
+}
+@media screen and (max-width:425px){
+  .tags{
+    display flex
+    align-items center
+    justify-content center
+    width 80%
+    margin 0 auto
+  }
+  .columns{
+    display flex
+    align-items center
+    justify-content center
+    flex-direction column-reverse
+  }
+  .cover_add{
+    top auto!important
+  }
+  .nightMode{
+    z-index: 9999;
+    position: fixed;
+    bottom: 25px;
+    left: -65px;
+    transform: rotate(-90deg) scale(.6);
+    transform-origin: top;
+  }
+  .photo{
+    width 140px!important
+    height 140px!important
+  }
+  .tag span a {
+    font-size 10px
+  }
+}
+.tag.is-warning > span {
+  color #333!important
+}
 </style>

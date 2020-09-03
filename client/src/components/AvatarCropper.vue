@@ -41,22 +41,21 @@ export default {
           this.$store.commit('updatedUserCover', response.url)
           this.$store.commit('hideLoader')
         }
-      }
-      if (response.error) {
-        this.$buefy.toast.open({
-          type: "is-danger",
-          message: "Cannot upload profile image. Please refresh and retry."
-        })
-        if (!this.isCover) {
-          this.$store.commit('hidePPLoader')
-        } else {
-          this.$store.commit('hideLoader')
+      } else {
+          this.$buefy.toast.open({
+            type: "is-danger",
+            message: "Cannot upload profile image. Reason:"+response.error
+          })
+          if (!this.isCover) {
+            this.$store.commit('hidePPLoader')
+          } else {
+            this.$store.commit('hideLoader')
         }
       }
+
     },
     handleCompleted(response, form, xhr) {
       this.message = "upload completed.";
-      console.log(response)
       if (!this.isCover) {
         this.$store.commit('showPPLoader')
       } else {
@@ -64,7 +63,6 @@ export default {
       }
     },
     handlerError(message, type, xhr) {
-      console.log(message)
       this.message = "Oops! Something went wrong...";
       if (!this.isCover) {
         this.$store.commit('hidePPLoader')

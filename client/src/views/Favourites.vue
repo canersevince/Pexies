@@ -10,7 +10,20 @@
         <QSpinnerInfinity style="font-size: 21px; color: #333!important; opacity: 60%"></QSpinnerInfinity>
       </div>
     </div>
-    <Photos :name="$store.getters.getAuth ? 'user' : 'guest'"/>
+    <Photos :pageStart="pagination.current*perPage-perPage" :pageEnd="pagination.current*perPage" :name="$store.getters.getAuth ? 'user' : 'guest'"/>
+    <div class="bottom-bar" :class="nm ? 'bg-dark' : ''"
+         :style="{'color' : !nm ? '#333!important' : '#ddd!important'}">
+      <pagination
+          :class="nm ? 'bg-dark' : ''" :style="{'color' : !nm ? '#333!important' : '#ddd!important'}"
+          type="is-warning"
+          order="is-centered"
+          icon-pack="fa"
+          :pagination="pagination"
+          :per-page="perPage"
+          @pageChange="pageChange($event)"
+      >
+      </pagination>
+    </div>
     <div class="error_secondary" v-if="loaded && favourites == 0">
       <b-message type="is-warning">
         You didn't save any pictures, yet.
@@ -21,17 +34,37 @@
 </template>
 <script>
 // @ is an alias to /src
-import Photos from '@/components/Photos.vue'
+import Photos from '../components/Photos.vue'
 import {QSpinnerInfinity} from 'quasar'
+import pagination from "../components/pagination";
 
 export default {
   name: 'Favourites',
   data(){
     return {
-      loaded: false
+      loaded: false,
+      perPage:20,
+      pagination: {
+        name: "",
+        current: 1,
+        rangeBefore: 2,
+        rangeAfter: 2,
+        prevIcon: 'chevron-left',
+        nextIcon: 'chevron-right'
+      },
+    }
+  },
+  watch :{
+    auth (v){
+      console.log('v', v)
+      if(v) this.pagination.name = 'userFav'
+      else this.pagination.name =  'localFav'
     }
   },
   computed: {
+    auth(){
+      return this.$store.getters.getAuth
+    },
     favourites() {
       const i = this.$store.getters.getFavourites
       return i.length
@@ -41,13 +74,26 @@ export default {
     }
   },
   methods:{
+    pageChange(i) {
+      this.pagination.current = i
+    },
     syncFavs(){
       this.$store.dispatch('syncFavs', {$buefy: this.$buefy})
     }
   },
+  mounted() {
+    this.$store.commit('hideLoader')
+    if(this.auth) {
+      this.pagination.name = 'userFav'
+    }
+    else {
+      this.pagination.name = 'localFav'
+    }
+  },
   components: {
     Photos,
-    QSpinnerInfinity
+    QSpinnerInfinity,
+    pagination
   }
 }
 </script>

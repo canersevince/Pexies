@@ -2,7 +2,7 @@ import {Photo} from "../../models/photo";
 import {flickrPhoto} from "../../models/flickr-photo";
 import FlickrUrlGenerator from "../../store/generators/flickr-url";
 
-export default function formatter (data: any){
+export default function formatter (data: any, word: string){
     const formatted: Photo[] = []
     if(!data.photo) return []
     data.photo.forEach((p: flickrPhoto) => {
@@ -22,6 +22,8 @@ export default function formatter (data: any){
             tiny: FlickrUrlGenerator(p, 's'),
             medium : FlickrUrlGenerator(p, 'n')
         }
+        newPhoto.created = new Date()
+        newPhoto.tags = word ? [word] : []
         formatted.push(newPhoto)
     })
     return formatted

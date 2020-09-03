@@ -13,7 +13,7 @@
       >
         <lazy-component style="height: 100%; width: 100%; z-index: 1;">
             <img style="width: 100%; height: 100%;object-fit: cover;"
-                 :src="photo.src.medium">
+                 :src="photo.src.medium ? photo.src.medium : photo.src.small">
         </lazy-component>
         <div style="z-index: 2; background: transparent">
           <Photo @like="callbackFunc()" :photo="photo"></Photo>
@@ -58,11 +58,11 @@ export default {
       return []
     },
     perPage() {
-      if (window.innerWidth >= 1920) return 21
-      if (window.innerWidth >= 1440) return 15
-      if (window.innerWidth >= 1280) return 10
+      if (window.innerWidth >= 1920) return 24
+      if (window.innerWidth >= 1440) return 16
+      if (window.innerWidth >= 1280) return 12
       if (window.innerWidth >= 768) return 12
-      return 4
+      return 8
     },
     lightMode() {
       return this.$store.getters['getNightMode']
@@ -76,14 +76,14 @@ export default {
         return this.$store.getters.getRandomPhotos
       }
       if (this.$props.name == 'user') {
-        const userFavs = this.$store.getters.getCurrentUsersFavourites
+        const userFavs = this.$store.getters.getCurrentUsersFavourites.slice(this.pageStart, this.pageEnd)
         if (userFavs) {
           return userFavs
         }
         return []
       }
       if (this.$props.name == 'guest') {
-        const guestFavs = this.$store.getters.getFavourites
+        const guestFavs = this.$store.getters.getFavourites.slice(this.pageStart, this.pageEnd)
         if (guestFavs) {
           return guestFavs
         }
@@ -100,7 +100,9 @@ export default {
         const usersFav = this.$props.userPhotos
         return usersFav.reverse()
       }
-
+      if(this.$props.name == 'dashboard'){
+        return this.$store.getters.getDashboard.slice(this.pageStart,this.pageEnd)
+      }
 
       return []
     }
@@ -146,28 +148,19 @@ export default {
     this.$store.commit('showLoader')
     switch (this.$props.name) {
       case "curated":
-        this.$store.dispatch('getCuratedPexels', this.$buefy).then(res => {
-          this.offsetTop = 100
-          this.offsetTop = 0
-        })
+        this.$store.dispatch('getCuratedPexels', this.$buefy)
         break;
       case "random":
         setTimeout(() => {
           if (self) {
-            self.$store.dispatch('getRandomPexels', this.$buefy).then(res => {
-              this.offsetTop = 100
-              this.offsetTop = 0
-            })
+            self.$store.dispatch('getRandomPexels', this.$buefy)
           }
         }, 300)
         break;
       case "user":
         break;
       case "guest":
-        this.$store.dispatch('loadFavourites', this.$buefy).then(res => {
-          this.offsetTop = 100
-          this.offsetTop = 0
-        })
+        this.$store.dispatch('loadFavourites', this.$buefy)
         break;
     }
     this.callbackFunc()
@@ -175,7 +168,7 @@ export default {
       if (self) {
         self.loaded = true
       }
-    }, 5000)
+    }, 2000)
   },
   destroyed() {
     const item = document.getElementById('intersection')
@@ -201,6 +194,7 @@ export default {
 
 
 .in-view {
+  transition .3s
   visibility: visible !important;
   opacity: 1 !important;
   animation: scale .5s ease forwards !important;
@@ -233,4 +227,7 @@ export default {
     opacity 1
   }
 }
+
+
+
 </style>

@@ -82,7 +82,10 @@ export default {
   },
   methods: {
     validation() {
-      return this.mailRegexp.test(this.User.email);
+      return this.mailRegexp.test(this.User.email)
+    },
+    pwValidation() {
+      return this.User.password.length>6;
     },
     close() {
       this.$emit('close')
@@ -90,7 +93,14 @@ export default {
     signup() {
       if (this.validation() === false) {
         this.$buefy.toast.open({
-          message: "Please enter a valid email.",
+          message: "Please enter a valid email..",
+          type: "is-warning"
+        })
+        return
+      }
+      if (this.pwValidation() === false) {
+        this.$buefy.toast.open({
+          message: "Password must be at least 6 characters long.",
           type: "is-warning"
         })
         return

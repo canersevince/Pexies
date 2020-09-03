@@ -7,6 +7,9 @@ export class Photo {
     photographer!: string
     photographer_url!: string
     photographer_id!: number
+    description!: string
+    tags!: string[]
+    created!: Date
     src!: {
         original: string;
         large2x: string;

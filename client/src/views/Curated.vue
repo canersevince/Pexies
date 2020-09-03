@@ -5,29 +5,25 @@
       <p style="font-size: 12px; opacity: 0.75; margin-top: 5px">Explore new content from Pexels curated list.</p>
     </div>
     <Photos :pageStart="pagination.current*perPage-perPage" :pageEnd="pagination.current*perPage" name="curated"/>
-    <div v-if="getTotal>0" class="bottom-bar" :class="nm ? 'bg-dark' : ''"
+    <div class="bottom-bar" :class="nm ? 'bg-dark' : ''"
          :style="{'color' : !nm ? '#333!important' : '#ddd!important'}">
-      <transition v-if="getTotal>0" tag="div" name="fade" mode="out-in">
-          <b-pagination
+          <pagination
               :class="nm ? 'bg-dark' : ''" :style="{'color' : !nm ? '#333!important' : '#ddd!important'}"
               type="is-warning"
               order="is-centered"
               icon-pack="fa"
-              v-model="pagination.current"
-              :total="getTotal"
-              :range-before="pagination.rangeBefore"
-              :range-after="pagination.rangeAfter"
+              :pagination="pagination"
               :per-page="perPage"
-              @change="pageChange($event)"
+              @pageChange="pageChange($event)"
           >
-          </b-pagination>
-      </transition>
+          </pagination>
     </div>
   </div>
 </template>
 <script>
 // @ is an alias to /src
 import Photos from '@/components/Photos.vue'
+import pagination from "@/components/pagination";
 
 export default {
   name: 'Curated',
@@ -36,7 +32,7 @@ export default {
       loaded: false,
       perPage:20,
       pagination: {
-        name: "pexiesRandom",
+        name: "curated",
         current: 1,
         rangeBefore: 2,
         rangeAfter: 2,
@@ -46,7 +42,8 @@ export default {
     }
   },
   components: {
-    Photos
+    Photos,
+    pagination
   },
   methods: {
     pageChange(i) {
@@ -54,9 +51,6 @@ export default {
     }
   },
   computed: {
-    getTotal() {
-      return this.$store.getters.getCuratedPhotos.length
-    },
     nm() {
       return this.$store.getters.getNightMode
     }
@@ -65,10 +59,5 @@ export default {
 </script>
 
 <style lang="stylus">
-.pagination-link
-  background-color: rgba(#ffc200, 0.7) !important
 
-.is-current
-  background-color #ffc200 !important
-  border-color #ffc200 !important
 </style>

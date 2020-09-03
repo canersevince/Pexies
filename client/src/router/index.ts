@@ -1,8 +1,9 @@
 import Vue from 'vue'
 import VueRouter, {RouteConfig} from 'vue-router'
 import Home from '../views/Home.vue'
-import authMiddleware from './middleware/authMware'
 import store from '../store/index'
+import * as Cookie from "js-cookie";
+
 Vue.use(VueRouter)
 
 const routes: Array<RouteConfig> = [
@@ -39,7 +40,7 @@ const routes: Array<RouteConfig> = [
         path: '/Profile',
         name: 'Profile',
         meta: {
-          requiresAuth : true
+            requiresAuth: true
         },
         // route level code-splitting
         // this generates a separate chunk (about.[hash].js) for this route
@@ -61,6 +62,17 @@ const routes: Array<RouteConfig> = [
         // this generates a separate chunk (about.[hash].js) for this route
         // which is lazy-loaded when the route is visited.
         component: () => import(/* webpackChunkName: "randomizer" */ '../views/Randomizer.vue')
+    },
+    {
+        path: '/Dashboard',
+        name: 'Dashboard',
+        meta: {
+            requiresAuth: true
+        },
+        // route level code-splitting
+        // this generates a separate chunk (about.[hash].js) for this route
+        // which is lazy-loaded when the route is visited.
+        component: () => import(/* webpackChunkName: "dashboard" */ '../views/Dashboard.vue')
     }
 ]
 
@@ -70,7 +82,7 @@ const router = new VueRouter({
     routes
 })
 
-router.beforeEach((to, from, next) => {
+router.beforeEach(async (to, from, next) => {
     // See if any of the matched routes has meta "requiresAuth"
     if (to.matched.some(route => route.meta.requiresAuth)) {
         // Yes this route requires authentication. See if the user is authenticated.
@@ -78,13 +90,44 @@ router.beforeEach((to, from, next) => {
             // User is authenticated, we allow access.
             next();
         } else {
-            // User is not authenticated. We can redirect her to
-            // our login page. Or wherever we want.
-            next("/");
+            const token = Cookie.get('pexies_token')
+            const username = Cookie.get('pexies_username')
+            if (token && username) {
+                store.commit('showLoader')
+                const isSuccess = await store.dispatch('loginWithToken', {token, username}).then( res => {
+                    return res
+                })
+                console.log(isSuccess)
+                console.log(isSuccess)
+                if (isSuccess) {
+                    next()
+                } else {
+                    store.dispatch('logout')
+                    next('/')
+                }
+            }
         }
+        // User is not authenticated. We can redirect her to
+        // our login page. Or wherever we want.
     } else {
+        const token = Cookie.get('pexies_token')
+        const username = Cookie.get('pexies_username')
+        if (token && username) {
+            store.commit('showLoader')
+            const isSuccess = await store.dispatch('loginWithToken', {token, username}).then( res => {
+                return res
+            })
+            console.log(isSuccess)
+            console.log(isSuccess)
+            if (isSuccess) {
+                next()
+            } else {
+                store.dispatch('logout')
+                next('/')
+            }
+        }
         next();
     }
-});
+})
 
 export default router

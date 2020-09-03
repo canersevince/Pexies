@@ -131,15 +131,15 @@ export default Vue.extend({
   align-items center
   justify-content center
   align-content center
-  box-shadow 0 12px 20px #bebebe, -6px -12px 20px #cdcdcd;
+  box-shadow 0 12px 20px #bebebe, -6px -12px 20px rgba(#cdcdcd, 0.4);
   border-radius 30px
   margin 2%
   cursor pointer
 
 .photo:hover
-  filter grayscale(0)
-  transform scale(1.1)
-  box-shadow 10px 12px 20px #bebebe, -10px -12px 20px #ccc;
+  filter grayscale(0)!important
+  transform scale(1.1)!important
+  box-shadow 10px 12px 20px #bebebe, -10px -12px 20px rgba(#ccc, 0.3)!important;
 
 .photo_link_wrapper
   width: 100%
@@ -194,7 +194,8 @@ export default Vue.extend({
   color pink
 
   &:hover
-    transform scale(1.05)
+    transform scale(1.05)!important
+    color hotpink!important
 
 @media screen and (max-width: 425px)
   .photo

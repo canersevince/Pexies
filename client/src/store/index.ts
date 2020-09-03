@@ -16,12 +16,14 @@ export default new Vuex.Store({
         auth: authModule
     },
     state: {
+        isAppAvailable$: false,
         flickrSearchResultTotal: 1,
         unsplashSearchResultTotal: 1,
         pexelsSearchResultTotal: 1,
-        nightMode: false,
+        nightMode: null,
         curated: [],
         random: [],
+        dashboardContent: [],
         searchResults: {
             pexies: [],
             flickr: [],
@@ -37,6 +39,9 @@ export default new Vuex.Store({
         switchNightMode(state, payload) {
             state.nightMode = payload
             Cookie.set('nm', payload)
+        },
+        isAppAvailable(state, payload) {
+            state.isAppAvailable$ = payload
         },
         hideLoader(state) {
             state.loading = false
@@ -90,6 +95,9 @@ export default new Vuex.Store({
             })
             state.auth.user.favourites.splice(idx, 1)
             state.loading = false;
+        },
+        updateDashboard(state, payload) {
+            state.dashboardContent = payload
         }
     },
     getters: {
@@ -108,6 +116,9 @@ export default new Vuex.Store({
         getNightMode(state) {
             return state.nightMode
         },
+        getDashboard(state) {
+            return state.dashboardContent
+        },
         getSearchResults(state) {
             return state.searchResults
         },
@@ -125,17 +136,43 @@ export default new Vuex.Store({
         }
     },
     actions: {
-        fetchTags(state) {
+        async getDashboard(store, activeTag = null) {
+            let interests = localStorage.getItem('interests')
+            if(interests) interests = JSON.parse(interests)
+            const tags = interests
+            let url
+            if(activeTag){
+                url ='/api/user/dashboard/'+activeTag
+            } else {
+                url = '/api/user/dashboard'
+            }
+            const {data} = await axios.post(url, {
+                tags,
+                username: store.getters['getCurrentUser'].username
+            })
+            let formatted = [] as Photo[]
+            if(data.unsplash){
+                console.log(data.unsplash)
+                data.unsplash.forEach((p:any) =>{
+                    const P:Photo = UnsplashGenerator(p)
+                    formatted.push(P)
+                })
+            }
+            console.log(data)
+            store.commit('updateDashboard', formatted)
+            store.commit('hideLoader')
+        },
+        fetchTags(store) {
             axios.get('/api/tags/get').then(res => {
                 console.log(res.data)
-                state.commit('updateTags', res.data)
+                store.commit('updateTags', res.data)
             })
         },
-        expandPhoto(state, {$buefy, $el}) {
+        async expandPhoto(store, {$buefy, $el}) {
             // tslint:disable-next-line
-            $buefy.modal.open({content: [$el]})
+            await $buefy.modal.open({content: [$el]})
             setTimeout(() => {
-                state.commit('hideLoader')
+                store.commit('hideLoader')
             }, 500)
         },
         loadFavourites(state) {
@@ -243,6 +280,7 @@ export default new Vuex.Store({
             try {
                 const {data} = await axios.get(`/api/search/photos/${word}/${page}/${perPage}`)
                 const {flickr, pexels, pexies, unsplash} = data
+                console.log(pexies)
                 state.commit('updatePages', {pageName: 'flickrSearchResultTotal', count: parseInt(flickr.total)})
                 state.commit('updatePages', {
                     pageName: 'pexelsSearchResultTotal',
@@ -250,11 +288,11 @@ export default new Vuex.Store({
                 })
                 state.commit('updatePages', {pageName: 'unsplashSearchResultTotal', count: parseInt(unsplash.total)})
                 if (flickr.photo && flickr.photo.length > 0) {
-                    modelledFlickrPhotos = FlickrFormatter(flickr)
+                    modelledFlickrPhotos = FlickrFormatter(flickr, word)
                 }
                 if (unsplash.results && unsplash.results.length > 0) {
                     unsplash.results.forEach((p: any) => {
-                        const formattedPhoto: Photo = UnsplashGenerator(p)
+                        const formattedPhoto: Photo = UnsplashGenerator(p, word)
                         modelledUnsplashPhotos.push(formattedPhoto)
                     })
                 }
@@ -265,7 +303,7 @@ export default new Vuex.Store({
                     flickr: modelledFlickrPhotos,
                     unsplash: modelledUnsplashPhotos,
                     pexels: modelledPexelsPhotos,
-                    pexies: []
+                    pexies: pexies
                 }
                 state.commit('updateSearchResults', SearchResults)
                 state.commit('hideLoader')
@@ -278,9 +316,7 @@ export default new Vuex.Store({
             }
         },
         async searchNewPage(state, {word, page, perPage, $buefy, platform}) {
-            console.log(word, page, perPage, platform)
             const {data} = await axios.get(`/api/search/photos/${word}/${page}/${perPage}/${platform}`)
-            console.log(data)
             if (data && data.error) {
                 $buefy.toast.open({
                     message: "Error while loading new photos, please try again.",
@@ -296,16 +332,15 @@ export default new Vuex.Store({
                 if (!data.results) return
                 const formatted: Photo[] = []
                 data.results.forEach((p: any) => {
-                    const formattedPhoto: Photo = UnsplashGenerator(p)
+                    const formattedPhoto: Photo = UnsplashGenerator(p, word)
                     formatted.push(formattedPhoto)
                 })
                 state.commit('pushNewPage', {platform, photos: formatted})
             } else if (platform == 'flickr') {
-                const formatted: Photo[] = FlickrFormatter(data)
+                const formatted: Photo[] = FlickrFormatter(data, word)
                 state.commit("pushNewPage", {platform, photos: formatted})
             } else if (platform == 'pexies') {
-                // not ready yet
-                console.log('works!')
+                state.commit('pushNewPage', {platform, photos: data.photos})
             }
         }
     },

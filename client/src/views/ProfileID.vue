@@ -36,10 +36,10 @@
           <Photos name="profileID" :userPhotos="user.favourites"></Photos>
         </b-tab-item>
         <b-tab-item label="Followers" icon-pack="fa" icon="users">
-
+          <p style="text-align: center; width: 50%; margin: 0 auto">This feature is not available right now. Come back soon:)</p>
         </b-tab-item>
         <b-tab-item label="Following" icon-pack="fa" icon="user">
-
+          <p style="text-align: center; width: 50%; margin: 0 auto">This feature is not available right now. Come back soon:)</p>
         </b-tab-item>
       </b-tabs>
     </div>

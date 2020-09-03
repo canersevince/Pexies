@@ -1,12 +1,12 @@
 <template>
   <div :class="darkMode ? 'bg-dark' : ''" class="profile_page box" v-if="user && user.username">
-      <AvatarCropper :trigger="'#upload_profile_picture'"
-                     :is-cover="false"></AvatarCropper>
-      <AvatarCropper
-          :trigger="'#upload_cover_picture'"
-          :config="{aspectRatio : 16 / 9, zoomable:true, movable:true, scalable: false}"
-          :is-cover="true">
-      </AvatarCropper>
+    <AvatarCropper :trigger="'#upload_profile_picture'"
+                   :is-cover="false"></AvatarCropper>
+    <AvatarCropper
+        :trigger="'#upload_cover_picture'"
+        :config="{aspectRatio : 16 / 9, zoomable:true, movable:true, scalable: false}"
+        :is-cover="true">
+    </AvatarCropper>
     <div class="profile_header" style="position: relative"
          :style="`background-image: url(${user.preferences.profile_cover})`">
       <span id="cover_add" v-if="!notBusy" style="
@@ -40,7 +40,7 @@
         <p class="my-2 text-bold profile_name" style="font-size: 16px; display: inline-block; cursor: default">
           {{ user.username }}</p>
         <p class="my-2 text-bold profile_description" style="font-size: 16px; display: inline-block; cursor: default">
-          {{user.description}}
+          {{ user.description }}
         </p>
         <ul class="profile_stats">
           <li class="stat_box">
@@ -65,10 +65,12 @@
           <Photos name="profile"></Photos>
         </b-tab-item>
         <b-tab-item label="Followers" icon-pack="fa" icon="users">
-
+          <p style="text-align: center; width: 50%; margin: 0 auto">This feature is not available right now. Come back
+            soon:)</p>
         </b-tab-item>
         <b-tab-item label="Following" icon-pack="fa" icon="user">
-
+          <p style="text-align: center; width: 50%; margin: 0 auto">This feature is not available right now. Come back
+            soon:)</p>
         </b-tab-item>
       </b-tabs>
     </div>
@@ -124,8 +126,8 @@ flex_column()
     background-repeat no-repeat
     padding 10px
     transition 150ms ease
-    border-bottom-left-radius 0!important
-    border-bottom-right-radius 0!important
+    border-bottom-left-radius 0 !important
+    border-bottom-right-radius 0 !important
     flex_column()
 
     #cover_add

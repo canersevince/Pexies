@@ -18,7 +18,7 @@
       </div>
     </transition-group>
     <b-message style="animation-duration: 100ms" key="message" class="my-2"
-               v-if="photos && photos.length == 0 || !photos"
+               v-if="photos && photos.length == 0 || !photos && searchTriggered"
                type="is-danger">{{platform == 'pexies' ? 'There is nothing in pexies yet... but you can upload one!' : 'There is nothing here...'}}
     </b-message>
   </div>
@@ -28,7 +28,7 @@
 import Photo from "@/components/Photo.vue";
 
 export default {
-  props: ["name", "pageStart", "pageEnd", "platform"],
+  props: ["name", "pageStart", "pageEnd", "platform", 'searchTriggered'],
   components: {Photo},
   data() {
     return {

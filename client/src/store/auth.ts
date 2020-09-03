@@ -2,7 +2,6 @@
 import axios from "axios";
 import { User } from '../models/user'
 import Cookie from 'js-cookie'
-import Store from './index'
 axios.defaults.baseURL = location.protocol + "//" + location.host
 export const authModule = {
     state: {
@@ -30,10 +29,15 @@ export const authModule = {
             console.log(payload)
             state.user.favourites.push(payload)
         },
+        clearAuth(state: any){
+            state.auth = false
+            state.user = {}
+        }
 
     },
     actions : {
         logout(store: any){
+            store.commit('clearAuth')
             Cookie.remove('pexies_token')
             Cookie.remove('pexies_username')
             location.reload()
@@ -82,7 +86,6 @@ export const authModule = {
                         message: `Welcome, ${data.username.charAt(0)+data.username.substring(1,data.username.length)}!`,
                         type: "is-success"
                     })
-                    Store.dispatch('syncFavs', {})
                     Close()
                 } else if (data.error){
                     if(data.code == 'not_found'){
@@ -103,27 +106,33 @@ export const authModule = {
                 })
             })
         },
-        loginWithToken(state: any, {token, username, $buefy}: any){
-            axios.post('/api/user/login_token', {pexies_token: token, username}).then(res => {
+        async loginWithToken(state: any, {token, username, $buefy}: any){
+            return await axios.post('/api/user/login_token', {pexies_token: token, username}).then(res => {
                 const { data } = res;
                 if (data && data.username && data.username.toLowerCase() == username.toLowerCase()) {
                     state.commit('successfulAuth', data)
-                    $buefy.toast.open({
-                        message: `Welcome back, ${data.username.charAt(0)+data.username.substring(1,data.username.length)}!`,
-                        type: "is-success"
-                    })
-                    Store.dispatch('syncFavs', {})
+                    if($buefy){
+                        $buefy.toast.open({
+                            message: `Welcome back, ${data.username.charAt(0)+data.username.substring(1,data.username.length)}!`,
+                            type: "is-success"
+                        })
+                    }
+                return true
                 } else if (data.error){
                     if(data.code == 'not_found'){
-                        $buefy.toast.open({
-                            message: data.error,
-                            type: "is-danger"
-                        })
+                        if($buefy) {
+                            $buefy.toast.open({
+                                message: data.error,
+                                type: "is-danger"
+                            })
+                        }
                     } else {
-                        $buefy.toast.open({
-                            message: "There was en error while authentication. Please retry.",
-                            type: "is-danger"
-                        })
+                        if($buefy) {
+                            $buefy.toast.open({
+                                message: "There was en error while authentication. Please retry.",
+                                type: "is-danger"
+                            })
+                        }
                     }
                 }
             }).catch(err => {
@@ -133,6 +142,7 @@ export const authModule = {
                 $buefy.toast.open({
                     message: "There was en error while authentication. Please retry."+ err.data
                 })
+
             })
         },
         syncFavs(store: any, {$buefy}: any){

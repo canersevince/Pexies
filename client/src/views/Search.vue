@@ -7,7 +7,7 @@
           <b-autocomplete
               @keypress.native.enter="search()"
               v-model="searchWord"
-              placeholder="Search photos across Pexels, Unsplash, Flickr and more..."
+              placeholder="Search photos across Pexies, Pexels, Unsplash and Flickr..."
               :data="getTags"
               icon-pack="fas"
               icon="search"
@@ -26,6 +26,7 @@
             <span>Pexies</span>
           </template>
           <SearchResults
+              :searchTriggered="searchTriggered"
               :pageStart="(paginationOptions[0].current*paginationOptions[0].perPage)"
               :pageEnd="paginationOptions[0].current*paginationOptions[0]+paginationOptions[0].perPage"
               :platform="'pexies'"
@@ -33,6 +34,7 @@
         </b-tab-item>
         <b-tab-item label="Flickr" icon-pack="fab" icon="flickr">
           <SearchResults
+              :searchTriggered="searchTriggered"
               :pageStart="(paginationOptions[1].current*paginationOptions[1].perPage)"
               :pageEnd="paginationOptions[1].current*paginationOptions[1]+paginationOptions[1].perPage"
               :platform="'flickr'"
@@ -44,6 +46,7 @@
             <span>Pexels</span>
           </template>
           <SearchResults
+              :searchTriggered="searchTriggered"
               :pageStart="(paginationOptions[2].current*paginationOptions[2].perPage)"
               :pageEnd="paginationOptions[2].current*paginationOptions[2].perPage+paginationOptions[2].perPage"
               :platform="'pexels'"
@@ -51,6 +54,7 @@
         </b-tab-item>
         <b-tab-item label="Unsplash" icon-pack="fab" icon="unsplash">
           <SearchResults
+              :searchTriggered="searchTriggered"
               :pageStart="(paginationOptions[3].current*paginationOptions[3].perPage)"
               :pageEnd="paginationOptions[3].current*paginationOptions[3].perPage+paginationOptions[3].perPage"
               :platform="'unsplash'"
@@ -88,8 +92,9 @@ export default {
   name: 'Search',
   data() {
     return {
+      searchTriggered: false,
       lastSearch: "",
-      perPage: 40,
+      perPage: 24,
       selectedTag: "",
       currentTab: 0,
       searchWord: "",
@@ -154,36 +159,29 @@ export default {
     pageChange(page, platform){
       const word = this.lastSearch.slice()
       console.log('page changed')
-      this.$store.dispatch('searchNewPage', {page, platform, word, $buefy: this.$buefy, perPage: 40})
+      this.$store.dispatch('searchNewPage', {page, platform, word, $buefy: this.$buefy, perPage: 24})
     },
     getTotal(platform) {
       if (platform == 'pexies') {
-        console.log(platform)
-        console.log(this.$store.state.flickrSearchResultTotal)
         return this.$store.state.flickrSearchResultTotal;
       }
       if (platform == 'pexels') {
-        console.log(platform)
-        console.log(this.$store.state.pexelsSearchResultTotal)
         return this.$store.state.pexelsSearchResultTotal
       }
       if (platform == 'flickr') {
-        console.log(platform)
-        console.log(this.$store.state.flickrSearchResultTotal)
         return this.$store.state.flickrSearchResultTotal;
       }
       if (platform == 'unsplash') {
-        console.log(platform)
-        console.log(this.$store.state.unsplashSearchResultTotal)
         return this.$store.state.unsplashSearchResultTotal;
       }
       return 0
     },
     search(val = null) {
+      this.searchTriggered = true
       const searchWord = val ? val : this.searchWord
       this.lastSearch = searchWord.slice()
       if (searchWord.length > 0) {
-        this.$store.dispatch('searchOnAllPlatforms', {word: searchWord, page: 1, perPage: 40, $buefy: this.$buefy})
+        this.$store.dispatch('searchOnAllPlatforms', {word: searchWord, page: 1, perPage: 24, $buefy: this.$buefy})
         this.selectedTag = ""
       }
     },
