@@ -123,6 +123,8 @@ export class DbService {
     async findUserByUsername(payload) {
         const exists = await userModel.findOne({username: payload.toLowerCase()}, {favourites: {$slice: -40}}).exec()
         if (exists as User) {
+            delete exists.password
+            delete exists.email
             return exists
         } else {
             return null

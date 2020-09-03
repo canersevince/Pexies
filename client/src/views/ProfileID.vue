@@ -75,11 +75,10 @@ export default {
     if (id) {
       const { data } = await Axios.get(`/api/user/getbyusername/${id}`)
       this.user = data
-      console.log(data)
-      this.$store.commit('hideLoader')
       if(!data.username){
         this.$router.push('/')
       }
+      this.$store.commit('hideLoader')
     }
   }
 }
