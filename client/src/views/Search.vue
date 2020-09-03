@@ -5,7 +5,7 @@
       <div class="search-box">
         <b-field>
           <b-autocomplete
-              @keypress.native.enter="search()"
+              open-on-focus
               v-model="searchWord"
               placeholder="Search photos across Pexies, Pexels, Unsplash and Flickr..."
               :data="getTags"
@@ -143,12 +143,17 @@ export default {
   },
   computed: {
     getTags() {
-      const tags = this.$store.getters.getTags.map(i => {
+      let tags = this.$store.getters.getTags.map(i => {
         return i.title
       })
       tags.unshift(this.searchWord)
-      return tags.filter(tag => {
+      tags  = tags.filter(tag => {
         return tag.toLowerCase().includes(this.searchWord.toLowerCase())
+      })
+      return tags.sort((a,b) => {
+        if(a>b) return 1
+        if(a<b) return -1
+        return 0
       })
     },
     nm() {
