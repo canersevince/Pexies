@@ -7,7 +7,7 @@
       <div
           class="photo"
           style="width: 200px; height: 200px; transition: 300ms!important"
-          :style="{visibility : i<perPage ? '' : 'hidden', opacity: i<perPage ? 1 : 0}"
+          :style="{ opacity: i<perPage ? 1 : 0}"
           :class="[!lightMode ? 'light' : 'dark_shadows', i<perPage ? '' : 'intersect', !isPhotoLikeable(photo) ? 'disable_grayscale' : '']"
           v-for="(photo, i) in photos" :key="i+''+Math.random()"
       >
@@ -135,8 +135,11 @@ export default {
       for (let i = 0; i < items.length; i++) {
         if (this.isElementInViewport(items[i])) {
           items[i].classList.add("in-view");
+          items[i].classList.add("animation_enter");
+          items[i].classList.remove("animation_enter");
         } else {
           items[i].classList.remove("in-view");
+          items[i].classList.remove("animation_enter");
         }
       }
     },
@@ -194,19 +197,19 @@ export default {
 
 
 .in-view {
-  transition .3s
-  visibility: visible !important;
+  transition 300ms ease-in-out!important
   opacity: 1 !important;
-  animation: scale .5s ease forwards !important;
 }
+
+.animation_enter
+  animation: scale .5s ease forwards !important;
 
 .not-in-view {
   opacity: 0 !important;
-  animation: scale .5s ease backwards !important;
 }
 
 .scale-enter-active, .scale-leave-active {
-  transition: opacity 0.3s, transform 0.3s cubic-bezier(0.215, 0.61, 0.355, 1)
+  transition: opacity 0.3s, cubic-bezier(0.215, 0.61, 0.355, 1)
 }
 
 .scale-enter, .scale-leave, .scale-leave-to {
@@ -218,7 +221,7 @@ export default {
 }
 @keyframes scale {
   0% {
-    transition: opacity 0.2s, transform 0.2s cubic-bezier(0.215, 0.61, 0.355, 1), all 200ms
+    transition: all 200ms, opacity 0.2s, transform 0.2s cubic-bezier(0.215, 0.61, 0.355, 1)
     opacity: 0;
     transform: scale3d(0, 0, 1)
   }
