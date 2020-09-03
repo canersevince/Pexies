@@ -6,7 +6,7 @@
          height: 100%; width: 100%">
       <div
           class="photo"
-          style="width: 200px; height: 200px"
+          style="width: 200px; height: 200px; transition: 300ms!important"
           :style="{visibility : i<perPage ? '' : 'hidden', opacity: i<perPage ? 1 : 0}"
           :class="[!lightMode ? 'light' : 'dark_shadows', i<perPage ? '' : 'intersect', !isPhotoLikeable(photo) ? 'disable_grayscale' : '']"
           v-for="(photo, i) in photos" :key="i+''+Math.random()"
