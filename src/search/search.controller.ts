@@ -60,20 +60,14 @@ export class SearchController {
         switch (platform) {
             case "pexels":
                 const pexelsArr = await this.PexelsService.searchByWord(word, page, perPage)
-                // const cachePexelsArr = this.PhotoGeneratorsService.PexelsFormatter(pexelsArr, page)
-                // await this.DbService.cachePhotosFromSearch(cachePexelsArr)
                 return pexelsArr
             case "pexies":
                 return []
             case "unsplash":
                 const unplashArr = await this.UnsplashService.searchByWord(word, page, perPage)
-                // const cacheUnsplashArr = this.PhotoGeneratorsService.UnsplashFormatter(unplashArr, page)
-                // await this.DbService.cachePhotosFromSearch(cacheUnsplashArr)
                 return unplashArr
             case "flickr":
                 const flickrArr = await this.FlickrService.searchByWord(word, page, perPage)
-                // const cacheFlickrArr = this.PhotoGeneratorsService.FlickrFormatter(flickrArr, page)
-                // await this.DbService.cachePhotosFromSearch(cacheFlickrArr)
                 return flickrArr
             default:
                 return {error: "Error. Unrecognized platform."}
