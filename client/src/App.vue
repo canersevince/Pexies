@@ -311,11 +311,13 @@ body {
   animation-duration 0.2s !important
 }
 
-.sharer {
+.sharer
   position absolute
-  right 10px
-  bottom 15px
-}
+  right 15px
+  bottom 20px
+  *
+    color #ddd
+
 
 @media screen and (max-width: 1920px) {
   .photos {

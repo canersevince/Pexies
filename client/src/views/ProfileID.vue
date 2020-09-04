@@ -2,6 +2,9 @@
   <div :class="darkMode ? 'bg-dark' : ''" class="profile_page box" v-if="user && user.username">
     <div class="profile_header" style="position: relative"
          :style="user.preferences.profile_cover ? `background-image: url(${user.preferences.profile_cover})` : ''">
+      <div class="sharer">
+        <Sharer :user="user"></Sharer>
+      </div>
       <div class="profile_picture">
         <div v-if="$store.state.PPloading" class="pp_loader">
           <QSpinnerInfinity style="color: hotpink"></QSpinnerInfinity>
@@ -67,12 +70,12 @@
 import Photos from "@/components/Photos";
 import Axios from 'axios'
 import pagination from "@/components/pagination";
-
+import Sharer from "@/components/Sharer";
 export default {
   name: "Profile",
   components: {
     Photos,
-    pagination
+    pagination,Sharer
   },
   data() {
     return {

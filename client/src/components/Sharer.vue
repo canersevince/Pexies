@@ -39,7 +39,12 @@ export default {
 
 <style scoped>
 
-
+ul{
+  background: #333;
+  border-radius: 6px;
+  color: white;
+  padding: 4px;
+}
 ul, ul li{
   margin: 0; padding: 0;
 }
