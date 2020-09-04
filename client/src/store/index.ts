@@ -75,11 +75,8 @@ export default new Vuex.Store({
             state.searchResults.pexels = payload.pexels
             state.searchResults.pexies = payload.pexies
             state.searchResults.unsplash = payload.unsplash
-            console.log('search results:')
-            console.log(state.searchResults)
         },
         updatePages(state: any, {pageName, count}) {
-            console.log(pageName, count)
             state[pageName] = count
         },
         pushNewPage(state: any, {platform, photos}) {
@@ -152,19 +149,16 @@ export default new Vuex.Store({
             })
             let formatted = [] as Photo[]
             if(data.unsplash){
-                console.log(data.unsplash)
                 data.unsplash.forEach((p:any) =>{
                     const P:Photo = UnsplashGenerator(p)
                     formatted.push(P)
                 })
             }
-            console.log(data)
             store.commit('updateDashboard', formatted)
             store.commit('hideLoader')
         },
         fetchTags(store) {
             axios.get('/api/tags/get').then(res => {
-                console.log(res.data)
                 store.commit('updateTags', res.data)
             })
         },
@@ -194,7 +188,6 @@ export default new Vuex.Store({
             }
             // @ts-ignore
             if (store.state.auth.auth) {
-                console.log('Favouriting...')
                 axios.post('/api/user/favourite', {username, photo}).then(res => {
                     if (res.data.code == 200) {
                         store.commit('pushNewFav', photo)
@@ -280,7 +273,6 @@ export default new Vuex.Store({
             try {
                 const {data} = await axios.get(`/api/search/photos/${word}/${page}/${perPage}`)
                 const {flickr, pexels, pexies, unsplash} = data
-                console.log(pexies)
                 state.commit('updatePages', {pageName: 'flickrSearchResultTotal', count: parseInt(flickr.total)})
                 state.commit('updatePages', {
                     pageName: 'pexelsSearchResultTotal',

@@ -87,9 +87,6 @@ export default {
       return ""
     }
   },
-  created() {
-    console.log(this.config)
-  }
 }
 </script>
 
