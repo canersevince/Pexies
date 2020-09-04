@@ -58,5 +58,3 @@ $ npm run test:cov
 - Website - [https://pexies.herokuapp.com](https://nestjs.com/)
 - Twitter - [@exalteddox](https://twitter.com/exalteddox)
 
-## License
- [MIT licensed](LICENSE).
