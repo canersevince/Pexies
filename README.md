@@ -1,5 +1,7 @@
 ## Pexies
-<a width="300" href="https://ibb.co/DMkChs4"><img src="https://i.ibb.co/GMk2yB7/Screen-Shot-2020-08-30-at-02-19-12.png" alt="Screen-Shot-2020-08-30-at-02-19-12" border="0"></a>
+<a href="https://ibb.co/59VTKBr"><img src="https://i.ibb.co/dcyBmGP/Screen-Shot-2020-09-04-at-17-38-23.png" alt="Screen-Shot-2020-09-04-at-17-38-23" border="0"></a>
+<a width="400" href="https://ibb.co/kmTY7kH"><img src="https://i.ibb.co/g48s2Hj/Screen-Shot-2020-09-04-at-17-36-22.png" alt="Screen-Shot-2020-09-04-at-17-36-22" border="0"></a>
+<a width="400" href="https://ibb.co/c3DKZtt"><img src="https://i.ibb.co/Jt5WG22/Screen-Shot-2020-09-04-at-17-36-52.png" alt="Screen-Shot-2020-09-04-at-17-36-52" border="0"></a>
 ## Description
 
 [Pexies](https://github.com/canersevince/pexies) Pexies is a personal photo gallery built on pexels api. You can see curated pictures, randomized pictures and add them to your favourites.
