@@ -49,7 +49,7 @@
          :style="{'color' : !darkMode ? '#333!important' : '#ddd!important'}"
           style="z-index: 99999">
       <pagination
-          :user="user",
+          :user="user"
           :class="darkMode ? 'bg-dark' : ''" :style="{'color' : !darkMode ? '#333!important' : '#ddd!important'}"
           type="is-warning"
           order="is-centered"
