@@ -93,12 +93,12 @@ export default {
         return this.$store.getters.getSearchResults
       }
       if (this.$props.name == 'profile') {
-        const usersFav = this.$store.getters.getCurrentUsersFavourites
-        return usersFav.reverse()
+        const usersFav = this.$store.getters.getCurrentUsersFavourites.slice(this.pageStart, this.pageEnd)
+        return usersFav
       }
       if (this.$props.name == 'profileID') {
-        const usersFav = this.$props.userPhotos
-        return usersFav.reverse()
+        const usersFav = this.$props.userPhotos.slice(this.pageStart, this.pageEnd)
+        return usersFav
       }
       if(this.$props.name == 'dashboard'){
         return this.$store.getters.getDashboard.slice(this.pageStart,this.pageEnd)

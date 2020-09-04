@@ -43,7 +43,7 @@ export class DbService {
         }).exec()
         if (!exists) {
             const registeredUser: User = JSON.parse(JSON.stringify(user))
-            const salt = salt_generator(registeredUser.username)
+            const salt = salt_generator(registeredUser.username.toLowerCase())
             registeredUser.password = Crypto.AES.encrypt(registeredUser.password, salt)
             registeredUser.created = new Date().toISOString()
             registeredUser.facebook = ""

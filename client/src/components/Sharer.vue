@@ -1,13 +1,13 @@
 <template>
     <ul>
-      <li>
-        <b-icon icon="facebook" pack="fab" @click="generator('facebook')"></b-icon>
+      <li @click="generator('facebook')">
+        <b-icon icon="facebook" pack="fab"></b-icon>
       </li>
-      <li>
-        <b-icon icon="twitter" pack="fab" @click="generator('twitter')"></b-icon>
+      <li @click="generator('twitter')">
+        <b-icon icon="twitter" pack="fab" ></b-icon>
       </li>
-      <li>
-        <b-icon icon="tumblr" pack="fab" @click="generator('tumblr')"></b-icon>
+      <li  click="generator('tumblr')">
+        <b-icon icon="tumblr" pack="fab"></b-icon>
       </li>
     </ul>
 </template>
@@ -18,7 +18,7 @@ export default {
   props:['user'],
   methods: {
     generator(platform){
-      const twitterLink = `http://www.tumblr.com/share?v=3&u=pexies.com/${this.user.username}&t=Check out my pexies collecition!!`
+      const twitterLink = `https://twitter.com/intent/tweet?url=pexies.com/${this.user.username}&text=Check%20out%20my%20pexies%20stash!!`
       const facebookLink = `https://www.facebook.com/sharer/sharer.php?u=pexies.com/${this.user.username}`
       const tumblrLink = `http://www.tumblr.com/share?v=3&u=pexies.com/${this.user.username}&t=Hello!`
       switch (platform){

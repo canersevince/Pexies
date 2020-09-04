@@ -19,7 +19,7 @@
 <script>
 export default {
 name: "pagination",
-  props: ["perPage", "pagination"],
+  props: ["perPage", "pagination", "user"],
   data(){
   return{
     curr:1
@@ -38,6 +38,11 @@ name: "pagination",
       if(this.pagination.name == "curated") return this.$store.getters.getCuratedPhotos.length
       if(this.pagination.name == "userFav") return this.$store.getters.getCurrentUsersFavourites.length
       if(this.pagination.name == "localFav") return this.$store.getters.getFavourites.length
+      if(this.pagination.name == "profileID") {
+        if(this.user && this.user.favourites){
+          return this.user.favourites.length
+        } else return 0
+      }
       return 0
     },
     nm() {

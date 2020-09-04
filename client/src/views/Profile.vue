@@ -65,7 +65,7 @@
     <div class="profile_content">
       <b-tabs type="is-toggle is-warning" expanded>
         <b-tab-item label="Favourites" icon-pack="fa" icon="heart">
-          <Photos name="profile"></Photos>
+          <Photos :pageStart="pagination.current*perPage-perPage" :pageEnd="pagination.current*perPage" name="profile"></Photos>
         </b-tab-item>
         <b-tab-item label="Followers" icon-pack="fa" icon="users">
           <p style="text-align: center; width: 50%; margin: 0 auto">This feature is not available right now. Come back
@@ -77,6 +77,20 @@
         </b-tab-item>
       </b-tabs>
     </div>
+    <div class="bottom-bar" :class="nm ? 'bg-dark' : ''"
+         :style="{'color' : !nm ? '#333!important' : '#ddd!important'}"
+          style="z-index: 99999">
+      <pagination
+          :class="nm ? 'bg-dark' : ''" :style="{'color' : !nm ? '#333!important' : '#ddd!important'}"
+          type="is-warning"
+          order="is-centered"
+          icon-pack="fa"
+          :pagination="pagination"
+          :per-page="perPage"
+          @pageChange="pageChange($event)"
+      >
+      </pagination>
+    </div>
   </div>
 </template>
 
@@ -85,14 +99,28 @@ import Photos from "@/components/Photos";
 import AvatarCropper from "@/components/AvatarCropper";
 import {QSpinnerInfinity} from 'quasar'
 import Sharer from "@/components/Sharer";
-
+import pagination from "@/components/pagination";
 export default {
   name: "Profile",
+  data(){
+    return{
+      perPage:20,
+      pagination: {
+        name: "userFav",
+        current: 1,
+        rangeBefore: 2,
+        rangeAfter: 2,
+        prevIcon: 'chevron-left',
+        nextIcon: 'chevron-right'
+      },
+    }
+  },
   components: {
     Sharer,
     Photos,
     AvatarCropper,
-    QSpinnerInfinity
+    QSpinnerInfinity,
+    pagination
   },
   computed: {
     notBusy() {
@@ -103,11 +131,19 @@ export default {
     },
     darkMode() {
       return this.$store.getters['getNightMode']
+    },
+    nm() {
+      return this.$store.getters.getNightMode
     }
   },
   mounted() {
     this.$store.commit('hideLoader')
-  }
+  },
+  methods:{
+    pageChange(i) {
+      this.pagination.current = i
+    },
+  },
 }
 </script>
 

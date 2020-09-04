@@ -45,21 +45,47 @@
         </b-tab-item>
       </b-tabs>
     </div>
+    <div class="bottom-bar" :class="darkMode ? 'bg-dark' : ''"
+         :style="{'color' : !darkMode ? '#333!important' : '#ddd!important'}"
+          style="z-index: 99999">
+      <pagination
+          :user="user",
+          :class="darkMode ? 'bg-dark' : ''" :style="{'color' : !darkMode ? '#333!important' : '#ddd!important'}"
+          type="is-warning"
+          order="is-centered"
+          icon-pack="fa"
+          :pagination="pagination"
+          :per-page="perPage"
+          @pageChange="pageChange($event)"
+      >
+      </pagination>
+    </div>
   </div>
 </template>
 
 <script>
 import Photos from "@/components/Photos";
 import Axios from 'axios'
+import pagination from "@/components/pagination";
 
 export default {
   name: "Profile",
   components: {
     Photos,
+    pagination
   },
   data() {
     return {
-      user: null
+      user: null,
+      perPage:20,
+      pagination: {
+        name: "profileID",
+        current: 1,
+        rangeBefore: 2,
+        rangeAfter: 2,
+        prevIcon: 'chevron-left',
+        nextIcon: 'chevron-right'
+      },
     }
   },
   computed: {
@@ -83,6 +109,11 @@ export default {
         if(self) self.$store.commit('hideLoader')
       },500)
     }
+  },
+  methods:{
+    pageChange(i) {
+      this.pagination.current = i
+    },
   }
 }
 </script>
