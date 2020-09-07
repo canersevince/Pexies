@@ -16,15 +16,25 @@ create a .env file in root folder.
 and edit values
 
 pexels_api_key=""
+
 mongo_server=""
+
 secret_salt=""
+
 FLICKR_API_KEY=""
+
 AWS_ACCESS_KEY=""
+
 AWS_SECRET_ACCESS_KEY=""
+
 BUCKET_NAME=""
+
 UNSPLASH=""
+
 UNSPLASH_SECRET=""
+
 NUDITY_DETECTOR=""
+
 
 
 ### Thanks to awesome people who created these awesome things
