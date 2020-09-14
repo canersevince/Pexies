@@ -53,8 +53,12 @@ export default {
     likedImgs() {
       const i = localStorage.getItem('likedPhotos')
       const a = this.$store.getters.getCurrentUsersFavourites
-      if (!a && i) return JSON.parse(i)
-      if (a && i) return [...JSON.parse(i), ...a]
+      if ((!a || a.length == 0) && i) {
+        return JSON.parse(i)
+      }
+      if (a && i) {
+        return [...JSON.parse(i), ...a]
+      }
       return []
     },
     perPage() {
@@ -109,6 +113,9 @@ export default {
   },
   methods: {
     isPhotoLikeable(p) {
+      if(!this.likedImgs){
+        return true
+      }
       const exists = this.likedImgs.find((val) => {
         return val.url == p.url
       })

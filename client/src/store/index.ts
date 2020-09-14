@@ -120,7 +120,10 @@ export default new Vuex.Store({
             return state.searchResults
         },
         getCurrentUsersFavourites(state: any) {
-            return state.auth.user.favourites
+            if(state.auth.user.favourites){
+                return state.auth.user.favourites
+            }
+            return []
         },
         updateNewFavourite(state: any, payload: Photo) {
             state.auth.user.favourites.push(payload)
