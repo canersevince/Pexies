@@ -7,7 +7,7 @@
 [Pexies](https://github.com/canersevince/pexies) Pexies is a personal photo gallery built on pexels api. You can see curated pictures, randomized pictures and add them to your favourites.
 
 # Use it
-  <p><a href="http://pexies.herokuapp.com/">Pexies!</a></p>
+  <p><a href="http://pexies.com/">Pexies!</a></p>
   <p align="center">
   
  
@@ -80,6 +80,6 @@ $ npm run test:cov
 ## Stay in touch
 
 - Author - [Caner Sevince](https://canersevince.com)
-- Website - [https://pexies.herokuapp.com](https://nestjs.com/)
+- Website - [https://pexies.com](https://pexies.com/)
 - Twitter - [@exalteddox](https://twitter.com/exalteddox)
 
