@@ -56,8 +56,8 @@ export default {
       if ((!a) && i) {
         return JSON.parse(i)
       }
-      const parsed = JSON.parse(i)
       if (a && i) {
+        const parsed = JSON.parse(i)
         return [...parsed, ...a]
       }
       console.log(a, i)
