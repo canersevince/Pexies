@@ -116,7 +116,11 @@ export default {
       if(!this.likedImgs){
         return true
       }
-      const exists = this.likedImgs.find((val) => {
+      const likedImgs = this.likedImgs.slice()
+      if(likedImgs.length ===0){
+        return true
+      }
+      const exists = likedImgs.find((val) => {
         return val.url == p.url
       })
       if (exists) {
