@@ -53,7 +53,7 @@ export default {
     likedImgs() {
       const i = localStorage.getItem('likedPhotos')
       const a = this.$store.getters.getCurrentUsersFavourites
-      if (!a) return JSON.parse(i)
+      if (!a && i) return JSON.parse(i)
       if (a && i) return [...JSON.parse(i), ...a]
       return []
     },
