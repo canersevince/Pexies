@@ -86,5 +86,5 @@ $ npm run test:cov
 
 - Author - [Caner Sevince](https://canersevince.com)
 - Website - [https://pexies.com](https://pexies.com/)
-- Twitter - [@exalteddox](https://twitter.com/exalteddox)
+- Twitter - [@thatpanicseller](https://twitter.com/thatpanicseller)
 
