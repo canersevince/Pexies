@@ -4,7 +4,12 @@
 <a width="400" href="https://ibb.co/c3DKZtt"><img src="https://i.ibb.co/Jt5WG22/Screen-Shot-2020-09-04-at-17-36-52.png" alt="Screen-Shot-2020-09-04-at-17-36-52" border="0"></a>
 ## Description
 
-[Pexies](https://github.com/canersevince/pexies) Pexies is a personal photo gallery built on pexels api. You can see curated pictures, randomized pictures and add them to your favourites.
+[Pexies](https://github.com/canersevince/pexies) 
+Pexies is a personal photo gallery built on Pexels&Flickr&Unsplash api. 
+Pexies is built with Nest.js with Vue.js front-end.
+
+You can see sign up or use it as guest, view daily curated pictures, randomized pictures or search, then add them to your favourites. 
+It utilizes public nudity detection api's to keep user profiles clean and safe. Uses AWS S3 Bucket to store user assets. As database, Pexies is using MongoDB cloud.
 
 # Use it
   <p><a href="http://pexies.com/">Pexies!</a></p>
